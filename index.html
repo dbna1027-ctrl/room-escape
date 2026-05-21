@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>방과 후 교실 — 방탈출</title>
+<title>방과 후 수영장 — 하드 모드</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
   :root {
@@ -16,10 +16,10 @@
     --color-text-info: #185FA5;
     --color-text-danger: #A32D2D;
     --color-text-success: #0F6E56;
-    --color-background-page: #F5F4EF;
+    --color-background-page: #EAF2F6;
     --color-background-primary: #FFFFFF;
-    --color-background-secondary: #F1EFE8;
-    --color-background-tertiary: #E5E2D8;
+    --color-background-secondary: #F0F4F6;
+    --color-background-tertiary: #DDE6EC;
     --color-background-info: #E6F1FB;
     --color-border-tertiary: rgba(0,0,0,0.15);
     --color-border-secondary: rgba(0,0,0,0.3);
@@ -31,7 +31,7 @@
     :root {
       --color-text-primary: #ECEBE6; --color-text-secondary: #B4B2A9; --color-text-tertiary: #888780;
       --color-text-info: #85B7EB; --color-text-danger: #F09595; --color-text-success: #5DCAA5;
-      --color-background-page: #1C1B18; --color-background-primary: #2A2A27; --color-background-secondary: #222220;
+      --color-background-page: #0E1A22; --color-background-primary: #2A2A27; --color-background-secondary: #1F2A30;
       --color-background-tertiary: #34332F; --color-background-info: #0C447C;
       --color-border-tertiary: rgba(255,255,255,0.15); --color-border-secondary: rgba(255,255,255,0.3);
     }
@@ -42,12 +42,16 @@
   .wrap { width: 100%; max-width: 720px; }
   button { font-family: inherit; font-size: 13px; padding: 8px 14px; background: transparent; color: var(--color-text-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); cursor: pointer; transition: background 0.15s; }
   button:hover { background: var(--color-background-secondary); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .escape-game { padding: 1rem 0; }
   .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 12px; flex-wrap: wrap; }
   .game-title { font-size: 18px; font-weight: 500; }
   .game-sub { font-size: 13px; color: var(--color-text-secondary); margin-left: 8px; }
-  .room { position: relative; width: 100%; aspect-ratio: 17 / 9; border-radius: var(--border-radius-lg); overflow: hidden; border: 0.5px solid var(--color-border-tertiary); background: #D9C9B0; }
+  .progress-bar { display: flex; gap: 6px; margin-top: 6px; }
+  .progress-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--color-background-tertiary); border: 1px solid var(--color-border-tertiary); }
+  .progress-dot.done { background: #0F6E56; border-color: #0F6E56; }
+  .room { position: relative; width: 100%; aspect-ratio: 17 / 9; border-radius: var(--border-radius-lg); overflow: hidden; border: 0.5px solid var(--color-border-tertiary); background: #B8D8E8; }
   .room svg { display: block; width: 100%; height: 100%; }
   .hotspot { cursor: pointer; transition: filter 0.15s; }
   .hotspot:hover { filter: brightness(1.13); }
@@ -61,246 +65,343 @@
 
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
   .modal-overlay.show { display: flex; }
-  .modal { background: var(--color-background-primary); padding: 22px 24px; border-radius: var(--border-radius-lg); max-width: 480px; width: 100%; max-height: calc(100vh - 40px); overflow-y: auto; border: 0.5px solid var(--color-border-tertiary); }
+  .modal { background: var(--color-background-primary); padding: 22px 24px; border-radius: var(--border-radius-lg); max-width: 460px; width: 100%; max-height: calc(100vh - 40px); overflow-y: auto; border: 0.5px solid var(--color-border-tertiary); }
   .modal h3 { margin: 0 0 6px; font-size: 16px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
   .modal p { margin: 6px 0; font-size: 14px; line-height: 1.55; }
+  .modal .puzzle-instr { font-size: 13px; color: var(--color-text-secondary); margin: 8px 0 14px; line-height: 1.55; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 14px; }
+  .modal-actions button { flex: 1; }
+  .modal-actions button.primary { background: var(--color-background-info); color: var(--color-text-info); border-color: var(--color-border-info); }
 
-  .chalkboard-display { background: linear-gradient(to bottom, #1F3F2E, #2A4A35); color: #E8E4D8; padding: 18px 20px; border-radius: 6px; font-family: var(--font-serif); border: 5px solid #5A3825; box-shadow: inset 0 0 30px rgba(255,255,255,0.04); margin: 12px 0; }
-  .chalk-title { text-align: center; font-size: 13px; letter-spacing: 1.5px; border-bottom: 0.5px dashed rgba(232,228,216,0.3); padding-bottom: 8px; margin-bottom: 12px; font-style: italic; color: #FFE680; }
-  .chalk-clues { list-style: none; padding: 0; margin: 0; font-size: 13.5px; line-height: 1.7; }
-  .chalk-clues li { padding: 4px 0 4px 16px; position: relative; }
-  .chalk-clues li::before { content: "·"; position: absolute; left: 0; color: #FFE680; font-size: 20px; line-height: 1; }
+  .digit-reveal { display: flex; flex-direction: column; align-items: center; padding: 18px 12px; background: linear-gradient(135deg, #FFF6D0, #FFE680); border: 1.5px solid #C49A20; border-radius: 8px; margin: 12px 0; }
+  .digit-reveal-label { font-size: 12px; color: #6A5535; letter-spacing: 1px; }
+  .digit-reveal-num { font-size: 56px; font-weight: 600; color: #5A3010; font-family: var(--font-mono); line-height: 1; margin: 6px 0; }
+  .digit-reveal-pos { font-size: 13px; color: #6A5535; }
+  .puzzle-solved-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; background: #0F6E56; color: #FFF; font-size: 11px; margin-left: 6px; }
 
-  .note-paper { margin: 12px 0; padding: 14px 16px; background: #F5EAC8; color: #3A2818; border: 0.5px solid #B89860; border-radius: var(--border-radius-md); font-family: var(--font-serif); font-size: 14px; line-height: 1.75; box-shadow: inset 0 0 12px rgba(120,80,30,0.08); }
-  .note-paper strong { font-weight: 500; }
-  .note-paper .note-instr { display: block; margin-top: 10px; padding-top: 10px; border-top: 0.5px dashed #B89860; font-size: 12px; color: #6A5535; font-style: italic; }
+  /* Scoreboard */
+  .scoreboard-tbl { background: #0F1A14; color: #5DFB7A; font-family: var(--font-mono); padding: 14px; border-radius: 6px; margin: 12px 0; }
+  .sb-header { text-align: center; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid #2A4A30; font-weight: bold; font-size: 13px; letter-spacing: 1px; }
+  .sb-row { display: grid; grid-template-columns: 1fr 1.4fr 50px; align-items: center; padding: 8px 10px; cursor: pointer; border-bottom: 1px dashed #1F2A22; font-size: 14px; transition: background 0.12s; }
+  .sb-row:hover { background: #1A2A20; }
+  .sb-row.picked { background: #2A4A30; color: #FFD400; cursor: default; }
+  .sb-rank { color: #FFD400; text-align: right; font-weight: bold; }
 
-  .scratch-pad-wrap { margin: 14px 0 8px; }
-  .scratch-pad-title { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px; }
-  .scratch-pad { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .scratch-pad th, .scratch-pad td { padding: 5px 4px; text-align: center; border: 0.5px solid var(--color-border-tertiary); }
-  .scratch-pad th { background: var(--color-background-secondary); font-weight: 500; font-size: 12px; color: var(--color-text-secondary); }
-  .scratch-pad td:first-child { background: var(--color-background-secondary); font-weight: 500; color: var(--color-text-secondary); width: 50px; }
-  .scratch-cell { padding: 5px 8px; background: var(--color-background-primary); border: 0.5px dashed var(--color-border-secondary); border-radius: 4px; cursor: pointer; min-width: 80px; font-size: 12px; font-family: inherit; color: var(--color-text-primary); transition: background 0.12s; }
-  .scratch-cell:hover { background: var(--color-background-tertiary); }
-  .scratch-cell .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; margin-right: 5px; border: 0.5px solid rgba(0,0,0,0.25); }
+  /* Simon */
+  .simon-board { background: #1F1F1F; padding: 14px; border-radius: 50%; margin: 14px auto; width: 230px; height: 230px; display: flex; flex-direction: column; }
+  .simon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; aspect-ratio: 1; flex: 1; }
+  .simon-panel { cursor: pointer; transition: background 0.08s, transform 0.05s; border-radius: 6px; user-select: none; }
+  .simon-panel:active { transform: scale(0.96); }
+  .simon-panel.red    { background: #7A2828; } .simon-panel.red.flash    { background: #FF6B6B; }
+  .simon-panel.green  { background: #245A24; } .simon-panel.green.flash  { background: #80E060; }
+  .simon-panel.yellow { background: #7A6020; } .simon-panel.yellow.flash { background: #FFE680; }
+  .simon-panel.blue   { background: #1F3F70; } .simon-panel.blue.flash   { background: #6BA8E8; }
+  .simon-status { text-align: center; padding: 8px; font-size: 13px; color: var(--color-text-secondary); }
+  .simon-status.error { color: var(--color-text-danger); }
+  .simon-round-disp { display: flex; gap: 4px; justify-content: center; margin: 6px 0; }
+  .simon-round-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--color-background-tertiary); }
+  .simon-round-dot.passed { background: #0F6E56; }
 
-  /* Circuit puzzle UI */
-  .circuit-instr { font-size: 13px; color: var(--color-text-secondary); margin: 10px 0; line-height: 1.6; }
-  .circuit-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 14px 0; }
-  .circuit-power-side, .circuit-out-side { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: var(--color-text-secondary); }
-  .circuit-power-side .arrow, .circuit-out-side .arrow { font-size: 16px; color: var(--color-text-info); }
-  .circuit-grid { display: grid; grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(3, 60px); gap: 3px; background: #2A2A2A; padding: 6px; border-radius: 6px; }
-  .circuit-tile { background: #E5E2D8; cursor: pointer; transition: transform 0.06s; position: relative; }
-  .circuit-tile:hover { background: #EDEAE0; }
-  .circuit-tile:active { transform: scale(0.93); }
-  .circuit-tile svg { display: block; width: 100%; height: 100%; }
-  .circuit-status { text-align: center; padding: 10px 12px; font-size: 14px; margin: 12px 0 4px; border-radius: 6px; font-weight: 500; }
-  .circuit-status.off { background: #5A2A2A; color: #FFC0C0; }
-  .circuit-status.on { background: #2A5A2A; color: #C0FFC0; }
+  /* Water jugs (3) */
+  .jugs-area { display: flex; gap: 14px; justify-content: center; align-items: flex-end; margin: 14px 0; }
+  .jug-wrap { display: flex; flex-direction: column; align-items: center; }
+  .jug-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .jug { width: 56px; border: 2.5px solid #2A4A6A; border-top: none; border-radius: 0 0 10px 10px; position: relative; background: rgba(255,255,255,0.5); overflow: hidden; }
+  .jug-water { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to bottom, #5BA8E8, #2A78C8); transition: height 0.45s ease-out; }
+  .jug-volume { font-size: 13px; font-weight: 500; margin-top: 6px; font-family: var(--font-mono); }
+  .jug-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin: 10px 0; }
+  .jug-actions button { font-size: 11px; padding: 6px 4px; }
+  .jug-target { padding: 10px; background: var(--color-background-info); color: var(--color-text-info); border-radius: 6px; text-align: center; font-size: 13px; margin: 8px 0; font-weight: 500; }
+  .jug-actions-h { font-size: 11px; color: var(--color-text-tertiary); text-align: center; margin: 8px 0 4px; }
 
+  /* Combo lock — 4 digits now */
+  .dial-row { display: flex; gap: 8px; justify-content: center; margin: 18px 0; }
+  .dial { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .dial-btn { width: 38px; height: 24px; padding: 0; font-size: 11px; background: #444; color: #FFD400; border-color: #222; }
+  .dial-btn:hover { background: #555; }
+  .dial-window { width: 46px; height: 54px; background: #1A1A1A; color: #FFD400; font-family: var(--font-mono); font-size: 26px; font-weight: 500; display: flex; align-items: center; justify-content: center; border-radius: 4px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.8); }
+
+  /* Poster */
+  .poster-content { background: #FFFCEF; color: #1A1A1A; padding: 16px 18px; border: 1.5px solid #B89860; border-radius: 6px; margin: 12px 0; font-family: var(--font-serif); }
+  .poster-h { text-align: center; color: #A32D2D; font-weight: bold; font-size: 14px; padding-bottom: 6px; border-bottom: 1px solid #A32D2D; margin-bottom: 10px; letter-spacing: 1px; }
+  .poster-list { list-style: none; padding: 0; margin: 8px 0; font-size: 13px; line-height: 1.7; }
+  .poster-list li::before { content: "▸ "; color: #A32D2D; }
+  .poster-emph { background: #FFF0CC; padding: 10px 12px; margin-top: 12px; border-left: 3px solid #C49A20; font-size: 13px; }
+  .poster-emph strong { color: #5A3010; font-family: var(--font-mono); font-size: 15px; letter-spacing: 2px; }
+  .poster-warn { background: #FBE6E6; padding: 8px 12px; margin-top: 8px; border-left: 3px solid #A32D2D; font-size: 12px; color: #6A2020; font-style: italic; }
+
+  /* Safe code */
   .code-row { display: flex; gap: 8px; justify-content: center; margin: 14px 0 6px; }
   .code-digit { width: 44px; height: 52px; text-align: center; font-size: 22px; font-weight: 500; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); color: var(--color-text-primary); font-family: inherit; }
   .code-digit:focus { outline: none; box-shadow: 0 0 0 2px var(--color-border-info); }
   .code-msg { font-size: 13px; text-align: center; min-height: 18px; color: var(--color-text-danger); margin-top: 4px; line-height: 1.4; }
-  .modal-actions { display: flex; gap: 8px; margin-top: 12px; }
-  .modal-actions button { flex: 1; }
-  .modal-actions button.primary { background: var(--color-background-info); color: var(--color-text-info); border-color: var(--color-border-info); }
-  .win-title { font-size: 20px; font-weight: 500; color: var(--color-text-success); text-align: center; margin-bottom: 8px; }
+  .win-title { font-size: 22px; font-weight: 500; color: var(--color-text-success); text-align: center; margin-bottom: 8px; }
+  .stars { font-size: 28px; text-align: center; margin: 8px 0; letter-spacing: 6px; }
+
+  /* Animations */
+  @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+  .lifering-spinning { animation: spin 1.8s linear; transform-origin: 495px 305px; transform-box: fill-box; }
+  @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+  .shake { animation: shake 0.4s ease-in-out; }
+  @keyframes bubbleRise {
+    0%   { transform: translateY(0); opacity: 0; }
+    10%  { opacity: 0.65; }
+    100% { transform: translateY(-60px); opacity: 0; }
+  }
+  .bubble { animation: bubbleRise 4s ease-in infinite; transform-box: fill-box; transform-origin: center; }
+  .b1 { animation-delay: 0s; }
+  .b2 { animation-delay: 1.3s; }
+  .b3 { animation-delay: 2.6s; }
+  .b4 { animation-delay: 0.8s; }
+  .b5 { animation-delay: 3.4s; }
+  @keyframes duckBob {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-2px) rotate(2deg); }
+  }
+  .duck { animation: duckBob 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes clockTick {
+    0%, 95%, 100% { transform: translateX(0); }
+    97% { transform: translateX(1px); }
+  }
+
   .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 </style>
 </head>
 <body>
 <div class="wrap">
-<h2 class="sr-only">방과 후 교실 회로+논리 추리 방탈출. 전기 패널의 회로를 연결해 사물함에 전기를 공급하고, 칠판 단서로 사물함 주인을 추리해 4자리 비밀번호를 풀어 교실을 탈출하세요.</h2>
+<h2 class="sr-only">방과 후 수영장에서 4개의 까다로운 미니 퍼즐을 풀고 4자리 비밀번호로 금고를 열어 탈출하세요.</h2>
 
 <div class="escape-game">
   <div class="game-header">
     <div>
-      <span class="game-title">방과 후 교실</span>
-      <span class="game-sub">회로를 잇고, 사물함의 주인을 찾아라</span>
+      <div><span class="game-title">방과 후 수영장</span><span class="game-sub">하드 모드</span></div>
+      <div class="progress-bar"><div class="progress-dot" id="dot1" title="점수판"></div><div class="progress-dot" id="dot2" title="호루라기"></div><div class="progress-dot" id="dot3" title="음수대"></div><div class="progress-dot" id="dot4" title="사물함"></div></div>
     </div>
     <button id="restartBtn">처음부터</button>
   </div>
 
   <div class="room" id="room">
     <svg viewBox="0 0 680 360" preserveAspectRatio="xMidYMid meet">
-      <rect width="680" height="260" fill="#DCD0B4"/>
-      <rect y="260" width="680" height="100" fill="#8A7A60"/>
-      <line x1="0" y1="288" x2="680" y2="288" stroke="#6A5840" stroke-width="0.4"/>
-      <line x1="0" y1="318" x2="680" y2="318" stroke="#6A5840" stroke-width="0.4"/>
-      <line x1="0" y1="348" x2="680" y2="348" stroke="#6A5840" stroke-width="0.4"/>
+      <!-- Wall: pool tile -->
+      <rect width="680" height="260" fill="#D4E4EC"/>
+      <g stroke="#A8C0CC" stroke-width="0.3">
+        <line x1="0" y1="50" x2="680" y2="50"/>
+        <line x1="0" y1="100" x2="680" y2="100"/>
+        <line x1="0" y1="150" x2="680" y2="150"/>
+        <line x1="0" y1="200" x2="680" y2="200"/>
+        <line x1="0" y1="250" x2="680" y2="250"/>
+        <line x1="50" y1="0" x2="50" y2="260"/>
+        <line x1="100" y1="0" x2="100" y2="260"/>
+        <line x1="150" y1="0" x2="150" y2="260"/>
+        <line x1="200" y1="0" x2="200" y2="260"/>
+        <line x1="250" y1="0" x2="250" y2="260"/>
+        <line x1="300" y1="0" x2="300" y2="260"/>
+        <line x1="350" y1="0" x2="350" y2="260"/>
+        <line x1="400" y1="0" x2="400" y2="260"/>
+        <line x1="450" y1="0" x2="450" y2="260"/>
+        <line x1="500" y1="0" x2="500" y2="260"/>
+        <line x1="550" y1="0" x2="550" y2="260"/>
+        <line x1="600" y1="0" x2="600" y2="260"/>
+        <line x1="650" y1="0" x2="650" y2="260"/>
+      </g>
+      <!-- Floor: pool deck tile -->
+      <rect y="260" width="680" height="100" fill="#E8DFD0"/>
+      <g stroke="#C8BCA0" stroke-width="0.3">
+        <line x1="0" y1="295" x2="680" y2="295"/>
+        <line x1="0" y1="330" x2="680" y2="330"/>
+      </g>
 
-      <!-- electric panel / fuse box -->
-      <g class="hotspot" onclick="onFuseBoxClick()">
-        <rect x="22" y="20" width="128" height="50" fill="#7A7060" stroke="#3A2818" stroke-width="1.5"/>
-        <rect x="26" y="24" width="120" height="42" fill="#8A7560" stroke="#3A2818" stroke-width="0.5"/>
-        <rect x="30" y="28" width="86" height="7" fill="#1A1A19"/>
-        <text x="73" y="33.5" font-size="5" fill="#E8E4D8" text-anchor="middle" font-weight="bold">전기 패널 — 위험</text>
-        <circle id="fuseStatus" cx="135" cy="32" r="3.5" fill="#A32D2D"/>
-        <g fill="#3A3A3A">
-          <rect x="32" y="44" width="13" height="18" stroke="#1A1A1A" stroke-width="0.4"/>
-          <rect x="50" y="44" width="13" height="18" stroke="#1A1A1A" stroke-width="0.4"/>
-          <rect x="68" y="44" width="13" height="18" stroke="#1A1A1A" stroke-width="0.4"/>
-          <rect x="86" y="44" width="13" height="18" stroke="#1A1A1A" stroke-width="0.4"/>
-          <rect x="104" y="44" width="13" height="18" stroke="#1A1A1A" stroke-width="0.4"/>
-          <rect x="122" y="44" width="13" height="18" stroke="#1A1A1A" stroke-width="0.4"/>
+      <!-- Hint poster -->
+      <g class="hotspot" onclick="onPosterClick()">
+        <rect x="15" y="20" width="115" height="75" fill="#FFFCEF" stroke="#666" stroke-width="1"/>
+        <text x="73" y="32" font-size="7" font-weight="bold" text-anchor="middle" fill="#A32D2D">안전수칙 안내</text>
+        <line x1="20" y1="35" x2="125" y2="35" stroke="#A32D2D" stroke-width="0.5"/>
+        <g font-size="5" fill="#1A1A19">
+          <text x="22" y="45">1. 음주 후 입수 금지</text>
+          <text x="22" y="53">2. 양치 후 30분 대기</text>
+          <text x="22" y="61">3. 우산 들고 입수 금지</text>
+          <text x="22" y="69">4. 다이빙 미숙자 금지</text>
         </g>
-        <g fill="#C44545">
-          <rect x="36" y="49" width="5" height="8" rx="1"/>
-          <rect x="54" y="49" width="5" height="8" rx="1"/>
-          <rect x="72" y="49" width="5" height="8" rx="1"/>
-          <rect x="90" y="49" width="5" height="8" rx="1"/>
-          <rect x="108" y="49" width="5" height="8" rx="1"/>
-          <rect x="126" y="49" width="5" height="8" rx="1"/>
+        <line x1="20" y1="74" x2="125" y2="74" stroke="#A32D2D" stroke-width="0.3"/>
+        <text x="73" y="85" font-size="5" text-anchor="middle" fill="#5F5E5A">- 자세히 보기 -</text>
+      </g>
+
+      <!-- Wall clock (easter egg) -->
+      <g class="hotspot" onclick="onClockClick()" id="clockGroup">
+        <circle cx="615" cy="55" r="22" fill="#FFFCEF" stroke="#3A3A3A" stroke-width="2"/>
+        <circle cx="615" cy="55" r="20" fill="#FFFFFF" stroke="#888" stroke-width="0.4"/>
+        <g stroke="#1A1A1A" stroke-width="0.8">
+          <line x1="615" y1="38" x2="615" y2="42"/>
+          <line x1="632" y1="55" x2="628" y2="55"/>
+          <line x1="615" y1="72" x2="615" y2="68"/>
+          <line x1="598" y1="55" x2="602" y2="55"/>
+        </g>
+        <line x1="615" y1="55" x2="615" y2="44" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="615" y1="55" x2="624" y2="55" stroke="#1A1A1A" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="615" cy="55" r="1.5" fill="#A32D2D"/>
+      </g>
+
+      <!-- Lifeguard locker -->
+      <g class="hotspot" onclick="onLockerClick()">
+        <rect x="20" y="105" width="105" height="155" fill="#3B6BA8" stroke="#1F3F70" stroke-width="2"/>
+        <rect x="26" y="111" width="93" height="6" fill="#1F3F70"/>
+        <rect x="30" y="120" width="85" height="14" fill="#FFFEF5" stroke="#666"/>
+        <text x="72" y="130" font-size="7" text-anchor="middle" fill="#1A1A1A" font-weight="bold">라이프가드</text>
+        <circle cx="72" cy="180" r="26" fill="#3A3A3A" stroke="#1A1A1A" stroke-width="2"/>
+        <circle cx="72" cy="180" r="22" fill="#1F1F1F"/>
+        <text x="72" y="178" font-size="5" fill="#888" text-anchor="middle">0  1  2</text>
+        <text x="72" y="186" font-size="5" fill="#888" text-anchor="middle">3  4  5</text>
+        <text x="72" y="194" font-size="5" fill="#888" text-anchor="middle">6  7  8  9</text>
+        <line x1="72" y1="180" x2="72" y2="160" stroke="#D4843A" stroke-width="2"/>
+        <circle cx="72" cy="180" r="2" fill="#D4843A"/>
+        <text x="72" y="156" font-size="4" fill="#D4843A" text-anchor="middle">▼</text>
+        <rect x="105" y="225" width="4" height="14" rx="1" fill="#888"/>
+        <g stroke="#1F3F70" stroke-width="0.4" opacity="0.6">
+          <line x1="30" y1="220" x2="115" y2="220"/>
+          <line x1="30" y1="225" x2="115" y2="225"/>
         </g>
       </g>
 
-      <!-- 4 lockers -->
-      <g class="hotspot" onclick="onLockersClick()">
-        <rect x="18" y="80" width="142" height="180" fill="#2A2A2A"/>
-        <g stroke="#1A1A1A" stroke-width="0.5">
-          <rect x="22" y="84" width="33" height="172" fill="#C44545"/>
-          <rect x="57" y="84" width="33" height="172" fill="#D4B43A"/>
-          <rect x="92" y="84" width="33" height="172" fill="#4A7A3E"/>
-          <rect x="127" y="84" width="33" height="172" fill="#3B6BA8"/>
+      <!-- Scoreboard -->
+      <g class="hotspot" onclick="onScoreboardClick()">
+        <rect x="145" y="25" width="125" height="125" fill="#1A1A19" stroke="#3A2818" stroke-width="2"/>
+        <rect x="148" y="28" width="119" height="119" fill="#0F1A14" stroke="#2A2A2A"/>
+        <text x="207" y="42" font-size="7" fill="#5DFB7A" text-anchor="middle" font-family="monospace" font-weight="bold">SCOREBOARD</text>
+        <line x1="155" y1="47" x2="260" y2="47" stroke="#2A4A30" stroke-width="0.4"/>
+        <g fill="#5DFB7A" font-family="monospace" font-size="6">
+          <text x="160" y="58">L1</text><text x="255" y="58" text-anchor="end" id="sbT1">--.--</text>
+          <text x="160" y="71">L2</text><text x="255" y="71" text-anchor="end" id="sbT2">--.--</text>
+          <text x="160" y="84">L3</text><text x="255" y="84" text-anchor="end" id="sbT3">--.--</text>
+          <text x="160" y="97">L4</text><text x="255" y="97" text-anchor="end" id="sbT4">--.--</text>
+          <text x="160" y="110">L5</text><text x="255" y="110" text-anchor="end" id="sbT5">--.--</text>
         </g>
-        <g stroke="#1A1A1A" stroke-width="0.4" opacity="0.7">
-          <line x1="27" y1="91" x2="50" y2="91"/><line x1="27" y1="94" x2="50" y2="94"/>
-          <line x1="62" y1="91" x2="85" y2="91"/><line x1="62" y1="94" x2="85" y2="94"/>
-          <line x1="97" y1="91" x2="120" y2="91"/><line x1="97" y1="94" x2="120" y2="94"/>
-          <line x1="132" y1="91" x2="155" y2="91"/><line x1="132" y1="94" x2="155" y2="94"/>
-        </g>
-        <!-- digit plates (start "off"/dim) -->
-        <g>
-          <rect id="plateRed" x="28" y="122" width="22" height="22" fill="#5A5A5A" stroke="#666" stroke-width="0.5"/>
-          <text id="lockerDigitRed" x="39" y="139" font-size="14" font-weight="bold" font-family="monospace" text-anchor="middle" fill="#3A3A3A">?</text>
-          <rect id="plateYellow" x="63" y="122" width="22" height="22" fill="#5A5A5A" stroke="#666" stroke-width="0.5"/>
-          <text id="lockerDigitYellow" x="74" y="139" font-size="14" font-weight="bold" font-family="monospace" text-anchor="middle" fill="#3A3A3A">?</text>
-          <rect id="plateGreen" x="98" y="122" width="22" height="22" fill="#5A5A5A" stroke="#666" stroke-width="0.5"/>
-          <text id="lockerDigitGreen" x="109" y="139" font-size="14" font-weight="bold" font-family="monospace" text-anchor="middle" fill="#3A3A3A">?</text>
-          <rect id="plateBlue" x="133" y="122" width="22" height="22" fill="#5A5A5A" stroke="#666" stroke-width="0.5"/>
-          <text id="lockerDigitBlue" x="144" y="139" font-size="14" font-weight="bold" font-family="monospace" text-anchor="middle" fill="#3A3A3A">?</text>
-        </g>
-        <g fill="#444">
-          <rect x="48" y="195" width="3" height="10" rx="1"/>
-          <rect x="83" y="195" width="3" height="10" rx="1"/>
-          <rect x="118" y="195" width="3" height="10" rx="1"/>
-          <rect x="153" y="195" width="3" height="10" rx="1"/>
-        </g>
+        <line x1="155" y1="118" x2="260" y2="118" stroke="#2A4A30" stroke-width="0.4"/>
+        <text x="207" y="130" font-size="6" fill="#FFA500" text-anchor="middle" font-family="monospace">[ 5-LANE SORT ]</text>
+        <text x="207" y="142" font-size="5" fill="#888" text-anchor="middle" font-family="monospace">millisecond</text>
       </g>
 
-      <!-- chalkboard -->
-      <g class="hotspot" onclick="onChalkboardClick()">
-        <rect x="175" y="45" width="245" height="158" fill="#5A3825" stroke="#3A1818" stroke-width="2.5"/>
-        <rect x="185" y="55" width="225" height="138" fill="#2A4A35" stroke="#3A2818" stroke-width="0.5"/>
-        <line x1="195" y1="75" x2="285" y2="75" stroke="#E8E4D8" stroke-width="0.4" opacity="0.5"/>
-        <line x1="200" y1="85" x2="270" y2="85" stroke="#E8E4D8" stroke-width="0.4" opacity="0.35"/>
-        <line x1="195" y1="95" x2="260" y2="95" stroke="#E8E4D8" stroke-width="0.4" opacity="0.25"/>
-        <text x="297" y="124" font-size="14" font-family="serif" font-style="italic" fill="#E8E4D8" text-anchor="middle">사물함의 주인을 찾아라</text>
-        <text x="297" y="148" font-size="9" font-family="serif" fill="#FFE680" text-anchor="middle" opacity="0.9">— 클릭하여 단서 보기 —</text>
-        <line x1="200" y1="165" x2="295" y2="165" stroke="#E8E4D8" stroke-width="0.4" opacity="0.4"/>
-        <line x1="200" y1="175" x2="275" y2="175" stroke="#E8E4D8" stroke-width="0.4" opacity="0.3"/>
-        <line x1="200" y1="183" x2="250" y2="183" stroke="#E8E4D8" stroke-width="0.4" opacity="0.2"/>
-        <rect x="175" y="200" width="245" height="6" fill="#3A2818"/>
-        <rect x="195" y="201.5" width="10" height="3" fill="#E8E4D8" rx="1"/>
-        <rect x="225" y="202" width="6" height="2.5" fill="#D44545" rx="1"/>
+      <!-- Simon -->
+      <g class="hotspot" onclick="onSimonClick()">
+        <rect x="285" y="25" width="105" height="135" fill="#2A2A2A" stroke="#1A1A1A" stroke-width="2"/>
+        <rect x="290" y="30" width="95" height="100" fill="#0F0F0F" stroke="#1A1A1A"/>
+        <rect x="295" y="35" width="42" height="42" fill="#7A2828"/>
+        <rect x="339" y="35" width="42" height="42" fill="#245A24"/>
+        <rect x="295" y="79" width="42" height="42" fill="#7A6020"/>
+        <rect x="339" y="79" width="42" height="42" fill="#1F3F70"/>
+        <text x="337" y="148" font-size="7" fill="#D4D4D4" text-anchor="middle" font-weight="bold">호루라기 6R</text>
       </g>
 
-      <!-- framed picture (hides safe) -->
+      <!-- Water fountain -->
+      <g class="hotspot" onclick="onFountainClick()">
+        <rect x="405" y="80" width="78" height="180" fill="#B8C0C8" stroke="#5A5A5A" stroke-width="1.5"/>
+        <rect x="411" y="85" width="66" height="44" fill="#3B6BA8" stroke="#1F3F70"/>
+        <text x="444" y="100" font-size="7" fill="#FFFFFF" text-anchor="middle" font-weight="bold">음수대</text>
+        <text x="444" y="112" font-size="5" fill="#B8D8E8" text-anchor="middle">3-JUG</text>
+        <text x="444" y="120" font-size="5" fill="#B8D8E8" text-anchor="middle">CHALLENGE</text>
+        <ellipse cx="444" cy="170" rx="32" ry="9" fill="#D4D4D4"/>
+        <ellipse cx="444" cy="167" rx="30" ry="6" fill="#3B6BA8"/>
+        <rect x="442" y="135" width="4" height="22" fill="#666"/>
+        <path d="M 442 137 Q 442 132 450 132" fill="none" stroke="#666" stroke-width="2.5"/>
+        <rect x="438" y="180" width="12" height="50" fill="#888"/>
+        <rect x="421" y="235" width="46" height="16" rx="3" fill="#D4843A" stroke="#A0651D"/>
+        <text x="444" y="246" font-size="6" fill="#FFFFFF" text-anchor="middle" font-weight="bold">PUSH</text>
+      </g>
+
+      <!-- Trophy frame (hides safe) -->
       <g id="paintingGroup" class="hotspot" onclick="onPaintingClick()">
-        <rect x="445" y="78" width="100" height="115" fill="#4A3825"/>
-        <rect x="453" y="86" width="84" height="99" fill="#E8DBC8"/>
-        <rect x="468" y="135" width="50" height="42" fill="#A85040"/>
-        <path d="M 463 135 L 493 117 L 523 135 Z" fill="#7A3525"/>
-        <rect x="486" y="158" width="14" height="19" fill="#3A1810"/>
-        <g fill="#3B6BA8">
-          <rect x="473" y="145" width="6" height="6"/>
-          <rect x="483" y="145" width="6" height="6"/>
-          <rect x="507" y="145" width="6" height="6"/>
-        </g>
-        <text x="495" y="108" font-size="7" font-family="serif" fill="#5A3525" text-anchor="middle">우리 학교</text>
+        <rect x="495" y="100" width="78" height="120" fill="#4A3825"/>
+        <rect x="501" y="108" width="66" height="104" fill="#E8DBC8"/>
+        <path d="M 522 140 Q 520 130 534 130 Q 548 130 546 140 L 545 162 Q 544 170 534 170 Q 524 170 523 162 Z" fill="#FFD700" stroke="#8A7020"/>
+        <path d="M 522 140 L 514 140 L 514 154 L 521 154" fill="none" stroke="#8A7020" stroke-width="1"/>
+        <path d="M 546 140 L 554 140 L 554 154 L 547 154" fill="none" stroke="#8A7020" stroke-width="1"/>
+        <rect x="530" y="168" width="8" height="14" fill="#FFD700"/>
+        <rect x="522" y="178" width="24" height="6" fill="#A87020"/>
+        <text x="534" y="128" font-size="5" fill="#5A3525" text-anchor="middle" font-weight="bold">우  승</text>
+        <text x="534" y="200" font-size="5" fill="#5A3525" text-anchor="middle">전국 수영대회 1995</text>
       </g>
 
-      <!-- safe (hidden) -->
+      <!-- Safe (hidden) -->
       <g id="safeGroup" class="hotspot" style="display:none;" onclick="onSafeClick()">
-        <rect x="450" y="85" width="92" height="98" fill="#3A3A3A" stroke="#1A1A1A" stroke-width="2"/>
-        <rect id="safeDoor" x="460" y="95" width="74" height="78" fill="#2A2A2A" stroke="#1A1A1A"/>
-        <circle cx="518" cy="132" r="9" fill="#5A5A5A" stroke="#1A1A1A" stroke-width="1.3"/>
-        <circle cx="518" cy="132" r="5" fill="#3A3A3A"/>
-        <rect x="468" y="105" width="42" height="14" rx="2" fill="#0F0F0F" stroke="#1A1A1A"/>
-        <text x="489" y="115" font-size="8" fill="#5A8A5A" text-anchor="middle" font-family="monospace">CODE</text>
-        <rect x="534" y="92" width="5" height="8" fill="#1A1A1A"/>
-        <rect x="534" y="168" width="5" height="8" fill="#1A1A1A"/>
+        <rect x="498" y="108" width="74" height="100" fill="#3A3A3A" stroke="#1A1A1A" stroke-width="2"/>
+        <rect id="safeDoor" x="505" y="115" width="60" height="86" fill="#2A2A2A" stroke="#1A1A1A"/>
+        <circle cx="551" cy="155" r="8" fill="#5A5A5A" stroke="#1A1A1A" stroke-width="1.3"/>
+        <circle cx="551" cy="155" r="4" fill="#3A3A3A"/>
+        <rect x="510" y="125" width="38" height="14" rx="2" fill="#0F0F0F" stroke="#1A1A1A"/>
+        <text x="529" y="135" font-size="7" fill="#5A8A5A" text-anchor="middle" font-family="monospace">CODE</text>
       </g>
 
-      <!-- classroom door -->
+      <!-- Door -->
       <g class="hotspot" onclick="onDoorClick()">
-        <rect x="555" y="48" width="115" height="222" fill="#7A5F3F" stroke="#3A2818" stroke-width="2"/>
-        <rect x="567" y="60" width="42" height="84" fill="#6A4F30" stroke="#3A2818"/>
-        <rect x="619" y="60" width="42" height="84" fill="#6A4F30" stroke="#3A2818"/>
-        <rect x="572" y="72" width="32" height="68" fill="#A8C8D8" stroke="#3A2818" stroke-width="0.6"/>
-        <line x1="572" y1="106" x2="604" y2="106" stroke="#3A2818" stroke-width="0.4"/>
-        <line x1="588" y1="72" x2="588" y2="140" stroke="#3A2818" stroke-width="0.4"/>
-        <rect x="624" y="72" width="32" height="68" fill="#A8C8D8" stroke="#3A2818" stroke-width="0.6"/>
-        <line x1="624" y1="106" x2="656" y2="106" stroke="#3A2818" stroke-width="0.4"/>
-        <line x1="640" y1="72" x2="640" y2="140" stroke="#3A2818" stroke-width="0.4"/>
-        <rect x="567" y="152" width="42" height="100" fill="#6A4F30" stroke="#3A2818"/>
-        <rect x="619" y="152" width="42" height="100" fill="#6A4F30" stroke="#3A2818"/>
-        <circle cx="571" cy="200" r="4" fill="#D4B43A" stroke="#8A7020"/>
-        <rect x="568" y="203" width="6" height="14" fill="#D4B43A" stroke="#8A7020"/>
+        <rect x="585" y="100" width="78" height="160" fill="#3B6BA8" stroke="#1F3F70" stroke-width="2"/>
+        <rect x="593" y="110" width="62" height="50" fill="#A8C8E8" stroke="#1F3F70" stroke-width="0.6"/>
+        <line x1="593" y1="135" x2="655" y2="135" stroke="#1F3F70" stroke-width="0.4"/>
+        <line x1="624" y1="110" x2="624" y2="160" stroke="#1F3F70" stroke-width="0.4"/>
+        <rect x="595" y="172" width="58" height="20" fill="#FFFFFF" stroke="#1F3F70"/>
+        <text x="624" y="186" font-size="10" font-family="sans-serif" font-weight="bold" fill="#A32D2D" text-anchor="middle">EXIT</text>
+        <rect x="593" y="200" width="62" height="56" fill="#2F5A92"/>
+        <circle cx="600" cy="225" r="4" fill="#D4B43A" stroke="#8A7020"/>
       </g>
 
-      <!-- teacher's desk -->
-      <g class="hotspot" onclick="onDeskClick()">
-        <rect x="200" y="222" width="220" height="12" fill="#A88B65" stroke="#5A4530"/>
-        <rect x="210" y="234" width="200" height="60" fill="#8B6F47" stroke="#5A4530"/>
-        <rect x="210" y="234" width="10" height="60" fill="#5A4530"/>
-        <rect x="400" y="234" width="10" height="60" fill="#5A4530"/>
-        <rect x="230" y="244" width="65" height="28" fill="#7A5F3F" stroke="#3A2818"/>
-        <circle cx="262" cy="258" r="2.5" fill="#D4B43A"/>
+      <!-- POOL with bubbles -->
+      <g class="hotspot" onclick="onPoolClick()">
+        <rect x="135" y="298" width="295" height="60" fill="#3B6BA8" stroke="#1F3F70" stroke-width="0.8"/>
+        <rect x="135" y="298" width="295" height="3" fill="#80B8E0"/>
+        <g stroke="#5B8BD8" stroke-width="0.6" opacity="0.7">
+          <line x1="150" y1="312" x2="190" y2="312"/>
+          <line x1="250" y1="320" x2="290" y2="320"/>
+          <line x1="320" y1="312" x2="365" y2="312"/>
+          <line x1="380" y1="328" x2="420" y2="328"/>
+          <line x1="160" y1="338" x2="200" y2="338"/>
+          <line x1="295" y1="345" x2="335" y2="345"/>
+        </g>
+        <g stroke="#FFD4A0" stroke-width="1.5" opacity="0.6">
+          <line x1="135" y1="315" x2="430" y2="315"/>
+          <line x1="135" y1="335" x2="430" y2="335"/>
+        </g>
+        <!-- bubbles rising -->
+        <circle class="bubble b1" cx="180" cy="358" r="2.5" fill="#FFFFFF" opacity="0.7"/>
+        <circle class="bubble b2" cx="220" cy="358" r="3" fill="#FFFFFF" opacity="0.7"/>
+        <circle class="bubble b3" cx="270" cy="358" r="2" fill="#FFFFFF" opacity="0.7"/>
+        <circle class="bubble b4" cx="340" cy="358" r="2.8" fill="#FFFFFF" opacity="0.7"/>
+        <circle class="bubble b5" cx="395" cy="358" r="2.2" fill="#FFFFFF" opacity="0.7"/>
       </g>
 
-      <!-- plant pot -->
-      <g id="plantGroup" class="hotspot" onclick="onPlantClick()">
-        <ellipse cx="470" cy="305" rx="22" ry="4" fill="#4A3220" opacity="0.5"/>
-        <path d="M 450 270 L 490 270 L 486 302 L 454 302 Z" fill="#A85A4A" stroke="#6A3525" stroke-width="1.2"/>
-        <ellipse cx="470" cy="270" rx="20" ry="3" fill="#7A4030"/>
-        <ellipse cx="463" cy="245" rx="9" ry="14" fill="#4A7A3E" transform="rotate(-25 463 245)"/>
-        <ellipse cx="477" cy="247" rx="9" ry="14" fill="#5A8A4E" transform="rotate(20 477 247)"/>
-        <ellipse cx="470" cy="240" rx="10" ry="12" fill="#3E6A35"/>
-        <path d="M 470 255 L 470 268" stroke="#3E5025" stroke-width="1.5"/>
-      </g>
-      <g id="plantDugGroup" style="display:none;">
-        <ellipse cx="470" cy="305" rx="22" ry="4" fill="#4A3220" opacity="0.5"/>
-        <path d="M 450 270 L 490 270 L 486 302 L 454 302 Z" fill="#A85A4A" stroke="#6A3525" stroke-width="1.2"/>
-        <ellipse cx="470" cy="270" rx="20" ry="3" fill="#5A3020"/>
-        <ellipse cx="463" cy="245" rx="9" ry="14" fill="#4A7A3E" transform="rotate(-25 463 245)" opacity="0.5"/>
-        <ellipse cx="477" cy="247" rx="9" ry="14" fill="#5A8A4E" transform="rotate(20 477 247)" opacity="0.5"/>
-        <ellipse cx="470" cy="240" rx="10" ry="12" fill="#3E6A35" opacity="0.5"/>
+      <!-- Rubber duck (easter egg) -->
+      <g class="hotspot duck" onclick="onDuckClick()">
+        <ellipse cx="400" cy="318" rx="13" ry="9" fill="#FFD400" stroke="#A87020" stroke-width="0.8"/>
+        <circle cx="409" cy="312" r="6" fill="#FFD400" stroke="#A87020" stroke-width="0.8"/>
+        <polygon points="414,311 419,313 414,315" fill="#D4843A"/>
+        <circle cx="411" cy="310" r="1" fill="#1A1A1A"/>
       </g>
 
-      <!-- student backpack -->
-      <g id="backpackGroup" class="hotspot" onclick="onBackpackClick()">
-        <ellipse cx="310" cy="345" rx="44" ry="4" fill="#3A2818" opacity="0.45"/>
-        <path d="M 275 298 Q 275 292 285 292 L 335 292 Q 345 292 345 298 L 348 340 Q 348 348 338 348 L 282 348 Q 272 348 272 340 Z" fill="#3B5BA8" stroke="#1F3F70" stroke-width="1"/>
-        <path d="M 282 318 L 338 318 L 341 340 Q 341 343 338 343 L 282 343 Q 279 343 279 340 Z" fill="#2F4878" stroke="#1F3F70" stroke-width="0.8"/>
-        <rect x="305" y="327" width="10" height="3" fill="#D4843A"/>
-        <path d="M 295 292 Q 295 282 305 282 L 315 282 Q 325 282 325 292" fill="none" stroke="#1F3F70" stroke-width="3"/>
-        <circle cx="290" cy="306" r="1.5" fill="#1F3F70"/>
-        <circle cx="330" cy="306" r="1.5" fill="#1F3F70"/>
+      <!-- Diving board -->
+      <g class="hotspot" onclick="onDivingBoardClick()">
+        <rect x="195" y="278" width="85" height="6" fill="#D4B43A" stroke="#8A7020"/>
+        <rect x="190" y="284" width="10" height="18" fill="#888"/>
+        <text x="237" y="276" font-size="4" fill="#5A4530" text-anchor="middle">DIVE</text>
       </g>
-      <g id="backpackOpenGroup" style="display:none;">
-        <ellipse cx="310" cy="345" rx="44" ry="4" fill="#3A2818" opacity="0.45"/>
-        <path d="M 275 305 Q 275 295 285 295 L 335 295 Q 345 295 345 305 L 348 340 Q 348 348 338 348 L 282 348 Q 272 348 272 340 Z" fill="#3B5BA8" stroke="#1F3F70" stroke-width="1"/>
-        <path d="M 275 305 Q 290 290 310 290 Q 330 290 345 305 L 345 310 L 275 310 Z" fill="#2F4878" stroke="#1F3F70" stroke-width="0.8"/>
-        <text x="310" y="333" font-size="6" fill="#E8E4D8" text-anchor="middle" font-style="italic">쪽지를 발견했다</text>
+
+      <!-- Life ring -->
+      <g id="lifeRingGroup" class="hotspot" onclick="onLifeRingClick()">
+        <circle cx="495" cy="305" r="14" fill="none" stroke="#C44545" stroke-width="6"/>
+        <circle cx="495" cy="305" r="14" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="6 4"/>
+        <circle cx="495" cy="305" r="8" fill="#E8DFD0" opacity="0.4"/>
+      </g>
+
+      <!-- Lifeguard chair (easter egg) -->
+      <g class="hotspot" onclick="onChairClick()">
+        <rect x="535" y="270" width="2" height="60" fill="#7A5A30"/>
+        <rect x="555" y="270" width="2" height="60" fill="#7A5A30"/>
+        <rect x="528" y="265" width="36" height="10" fill="#C44545" stroke="#7A2020"/>
+        <rect x="528" y="258" width="36" height="9" fill="#C44545" stroke="#7A2020"/>
+        <rect x="540" y="310" width="12" height="2" fill="#7A5A30"/>
+        <line x1="536" y1="278" x2="556" y2="328" stroke="#7A5A30" stroke-width="1.5"/>
       </g>
     </svg>
   </div>
 
   <div class="message-log" id="messageLog">
-    방과 후, 텅 빈 교실에서 깨어났다. 사물함은 어둡고, 칠판에는 분필 자국이 보인다. 단서를 모으고 사물함에 전기를 통하게 해야 할 것 같다.
+    방과 후, 수영장은 텅 비었고 라이프가드도 휴가다. 4개의 까다로운 퍼즐을 풀어 4자리 비밀번호를 알아내고 탈출해야 한다.
   </div>
 
   <div class="inventory">
@@ -318,315 +419,455 @@
 
 <script>
 (function(){
-  const COLORS = {
-    red:    { name: '빨강',  hex: '#C44545' },
-    yellow: { name: '노랑',  hex: '#D4B43A' },
-    green:  { name: '초록',  hex: '#4A7A3E' },
-    blue:   { name: '파랑',  hex: '#3B6BA8' }
-  };
-  const SOLUTION_COLOR = { pos1: 'yellow', pos2: 'green', pos3: 'red', pos4: 'blue' };
-
-  const CHALKBOARD_CLUES = [
-    '1번 자리(가장 앞) 학생은 수학을 좋아한다.',
-    '노랑 사물함과 초록 사물함은 바로 옆자리에 있다.',
-    '미술을 좋아하는 학생의 사물함은 빨강이다.',
-    '영어를 좋아하는 학생의 바로 옆자리에는 미술을 좋아하는 학생이 앉는다.',
-    '빨강 사물함은 노랑 사물함보다 뒷자리에 있다.'
-  ];
-  const DRAWER_CLUE   = '영어를 좋아하는 학생의 사물함은 초록이다.';
-  const BACKPACK_CLUE = '과학을 좋아하는 학생은 가장 뒷자리(4번)에 앉는다.';
-
-  // --- Circuit puzzle constants ---
-  // Layout uses E = elbow (default T+R), S = straight (default L+R)
-  // Middle row is mostly Straight but with elbow in col 0 — straight middle is broken so player must detour
-  const CIRCUIT_LAYOUT = [
-    ['E','S','E'],
-    ['E','S','E'],
-    ['E','S','E']
-  ];
-  // Solution requires routing around: middle (1,0)/(1,2) are elbows, can't carry L→R straight
-  const TILE_BASE = { E: ['T','R'], S: ['L','R'] };
-  const DIR_ORDER = ['T','R','B','L'];
-
-  function rotateDir(dir, n) {
-    return DIR_ORDER[(DIR_ORDER.indexOf(dir) + n + 4) % 4];
+  // ============ Audio ============
+  let audioCtx = null;
+  function getAudio() {
+    if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} }
+    return audioCtx;
   }
-  function getTileConnections(type, rotation) {
-    return TILE_BASE[type].map(d => rotateDir(d, rotation));
+  function playTone(freq, dur, type, vol) {
+    dur = dur || 0.25; type = type || 'sine'; vol = vol || 0.13;
+    const ctx = getAudio(); if (!ctx) return;
+    const t0 = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type; osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, t0);
+    gain.gain.linearRampToValueAtTime(vol, t0 + 0.02);
+    gain.gain.linearRampToValueAtTime(0, t0 + dur);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t0); osc.stop(t0 + dur);
   }
+  function playClick() { playTone(800, 0.05, 'square', 0.07); }
+  function playChime() {
+    [523.25, 659.25, 783.99].forEach((f, i) => setTimeout(() => playTone(f, 0.3, 'triangle', 0.15), i * 120));
+  }
+  function playWhistle() {
+    setTimeout(() => playTone(2500, 0.15, 'square', 0.08), 0);
+    setTimeout(() => playTone(2200, 0.15, 'square', 0.08), 150);
+  }
+  function playSplash() {
+    for (let i = 0; i < 6; i++) setTimeout(() => playTone(200 + Math.random() * 300, 0.1, 'sawtooth', 0.05), i * 30);
+  }
+  function playBuzz() { playTone(180, 0.3, 'sawtooth', 0.12); }
+  function playQuack() {
+    playTone(680, 0.08, 'square', 0.1);
+    setTimeout(() => playTone(540, 0.12, 'square', 0.1), 100);
+  }
+  function playTick() { playTone(2000, 0.02, 'square', 0.05); }
 
-  function isCircuitSolved() {
-    const visited = [[false,false,false],[false,false,false],[false,false,false]];
-    const startR = 1, startC = 0;
-    const startConns = getTileConnections(CIRCUIT_LAYOUT[startR][startC], circuitRotations[startR][startC]);
-    if (!startConns.includes('L')) return false;
-    const queue = [[startR, startC, 'L']];
-    visited[startR][startC] = true;
-    while (queue.length) {
-      const [r, c, fromDir] = queue.shift();
-      const conns = getTileConnections(CIRCUIT_LAYOUT[r][c], circuitRotations[r][c]);
-      for (const dir of conns) {
-        if (dir === fromDir) continue;
-        let nr = r, nc = c, neighborDir;
-        if (dir === 'T') { nr = r - 1; neighborDir = 'B'; }
-        else if (dir === 'B') { nr = r + 1; neighborDir = 'T'; }
-        else if (dir === 'L') { nc = c - 1; neighborDir = 'R'; }
-        else if (dir === 'R') { nc = c + 1; neighborDir = 'L'; }
-        if (nr < 0 || nr >= 3 || nc < 0 || nc >= 3) {
-          if (r === 1 && c === 2 && dir === 'R') return true;
-          continue;
-        }
-        if (visited[nr][nc]) continue;
-        const nConns = getTileConnections(CIRCUIT_LAYOUT[nr][nc], circuitRotations[nr][nc]);
-        if (!nConns.includes(neighborDir)) continue;
-        visited[nr][nc] = true;
-        queue.push([nr, nc, neighborDir]);
-      }
-    }
-    return false;
-  }
-
-  function randomizeCircuit() {
-    for (let r = 0; r < 3; r++) {
-      for (let c = 0; c < 3; c++) {
-        circuitRotations[r][c] = Math.floor(Math.random() * 4);
-      }
-    }
-    // Make sure not already solved on start
-    if (isCircuitSolved()) {
-      circuitRotations[0][0] = (circuitRotations[0][0] + 1) % 4;
-    }
-  }
-
-  function tileSvg(type, rotation, powered) {
-    const size = 60, c = size / 2;
-    const conns = getTileConnections(type, rotation);
-    const color = powered ? '#FFD400' : '#3A3A3A';
-    let lines = '';
-    conns.forEach(d => {
-      let ex, ey;
-      if (d === 'T') { ex = c; ey = 0; }
-      else if (d === 'R') { ex = size; ey = c; }
-      else if (d === 'B') { ex = c; ey = size; }
-      else { ex = 0; ey = c; }
-      lines += '<line x1="'+c+'" y1="'+c+'" x2="'+ex+'" y2="'+ey+'" stroke="'+color+'" stroke-width="10" stroke-linecap="round"/>';
-    });
-    const dot = '<circle cx="'+c+'" cy="'+c+'" r="5" fill="'+color+'"/>';
-    return '<svg viewBox="0 0 '+size+' '+size+'">'+lines+dot+'</svg>';
-  }
+  // ============ State ============
+  let puzzle = {};
+  let state = {};
+  let scratchLog = [];
 
   function generatePuzzle() {
-    const pool = [1,2,3,4,5,6,7,8,9].sort(() => Math.random() - 0.5).slice(0, 4);
-    const lockerDigits = { red: pool[0], yellow: pool[1], green: pool[2], blue: pool[3] };
-    const code = ['pos1','pos2','pos3','pos4'].map(p => lockerDigits[SOLUTION_COLOR[p]]).join('');
-    return { lockerDigits, code };
+    const digits = [0,1,2,3].map(() => Math.floor(Math.random() * 10));
+    // 5 lanes with millisecond precision (e.g. 28.47s)
+    const times = new Set();
+    while (times.size < 5) times.add((20 + Math.random() * 25).toFixed(2));
+    const tArr = Array.from(times).map(parseFloat);
+    const lanes = [1,2,3,4,5].map((n, i) => ({ num: n, time: tArr[i] }));
+    // 3-jug puzzle: 7L, 5L, 3L containers. Target in 7L jug.
+    // Reachable in 7L: 0..7 by Bezout (gcd(7,5,3)=1). Pick non-trivial target.
+    const jugTargets = [1, 2, 4, 6];
+    const jugTarget = jugTargets[Math.floor(Math.random() * jugTargets.length)];
+    // 4-digit lock code
+    const lockCode = [
+      Math.floor(Math.random() * 10),
+      Math.floor(Math.random() * 10),
+      Math.floor(Math.random() * 10),
+      Math.floor(Math.random() * 10)
+    ];
+    return {
+      d1: digits[0], d2: digits[1], d3: digits[2], d4: digits[3],
+      code: digits.join(''),
+      lanes, jugTarget, lockCode
+    };
   }
 
-  let puzzle = generatePuzzle();
-  let circuitRotations = [[0,0,0],[0,0,0],[0,0,0]];
-  randomizeCircuit();
-  let state = {
-    inv: [], hasSmallKey: false, plantChecked: false,
-    drawerOpened: false, backpackChecked: false,
-    circuitSolved: false,
-    paintingMoved: false, safeOpened: false,
-    wrongAttempts: 0, won: false
-  };
-  let scratchPad = {
-    pos1: { color: null, subject: null }, pos2: { color: null, subject: null },
-    pos3: { color: null, subject: null }, pos4: { color: null, subject: null }
-  };
-
-  const itemNames = {
-    small_key:  { icon: 'ti-key',    name: '작은 열쇠' },
-    note:       { icon: 'ti-notes',  name: '서랍 쪽지' },
-    bp_note:    { icon: 'ti-note',   name: '가방 쪽지' },
-    golden_key: { icon: 'ti-key',    name: '교실 열쇠' }
-  };
-  const SCRATCH_COLOR_CYCLE   = [null, 'red', 'yellow', 'green', 'blue'];
-  const SCRATCH_SUBJECT_CYCLE = [null, '수학', '영어', '미술', '과학'];
+  function resetState() {
+    state = {
+      scoreboardSolved: false, simonSolved: false,
+      jugSolved: false, lockSolved: false,
+      paintingMoved: false, safeOpened: false,
+      won: false, wrongAttempts: 0,
+      poolClicks: 0, duckClicks: 0, clockClicks: 0, chairClicks: 0
+    };
+    scratchLog = [];
+    sbClicks = []; sbAttempts = 0;
+    simonReset();
+    jugLevels = { a: 0, b: 0, c: 0 };
+    dialValues = [0, 0, 0, 0];
+  }
 
   function log(msg) { document.getElementById('messageLog').textContent = msg; }
   function showModal(html) { document.getElementById('modalBox').innerHTML = html; document.getElementById('modalOverlay').classList.add('show'); }
   function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
   window.closeModal = closeModal;
 
+  function updateProgress() {
+    document.getElementById('dot1').classList.toggle('done', state.scoreboardSolved);
+    document.getElementById('dot2').classList.toggle('done', state.simonSolved);
+    document.getElementById('dot3').classList.toggle('done', state.jugSolved);
+    document.getElementById('dot4').classList.toggle('done', state.lockSolved);
+  }
+
   function renderInventory() {
     const div = document.getElementById('inventoryItems');
-    if (state.inv.length === 0) { div.innerHTML = '<span class="inv-empty">아직 가진 것이 없다</span>'; return; }
-    div.innerHTML = state.inv.map(i => {
-      const it = itemNames[i];
-      return '<span class="inv-item" data-id="'+i+'"><i class="ti '+it.icon+'" aria-hidden="true"></i>'+it.name+'</span>';
-    }).join('');
-    div.querySelectorAll('.inv-item').forEach(el => { el.addEventListener('click', () => onInvClick(el.dataset.id)); });
-  }
-  function addItem(item) { if (!state.inv.includes(item)) { state.inv.push(item); renderInventory(); } }
-
-  function updateLockerDigitsInSVG() {
-    const COLOR_KEYS = ['Red','Yellow','Green','Blue'];
-    const cMap = { Red: 'red', Yellow: 'yellow', Green: 'green', Blue: 'blue' };
-    COLOR_KEYS.forEach(k => {
-      const txt = document.getElementById('lockerDigit'+k);
-      const plt = document.getElementById('plate'+k);
-      if (state.circuitSolved) {
-        txt.textContent = puzzle.lockerDigits[cMap[k]];
-        txt.setAttribute('fill', '#1A1A1A');
-        plt.setAttribute('fill', '#F0E8D0');
-      } else {
-        txt.textContent = '?';
-        txt.setAttribute('fill', '#3A3A3A');
-        plt.setAttribute('fill', '#5A5A5A');
-      }
-    });
-  }
-
-  // ====================== Chalkboard ======================
-  function chalkboardModalHTML() {
-    let cluesHTML = '<ul class="chalk-clues">';
-    CHALKBOARD_CLUES.forEach(c => { cluesHTML += '<li>' + c + '</li>'; });
-    cluesHTML += '</ul>';
-    return (
-      '<h3>칠판</h3>' +
-      '<p style="font-size:13px;color:var(--color-text-secondary);">분필로 단서가 쓰여있다.</p>' +
-      '<div class="chalkboard-display"><div class="chalk-title">[ 사물함의 주인을 찾아라 ]</div>' + cluesHTML + '</div>' +
-      scratchPadHTML() +
-      '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>'
-    );
-  }
-  function scratchPadHTML() {
-    let html = '<div class="scratch-pad-wrap"><div class="scratch-pad-title">추리 메모 (셀을 클릭해 후보를 채워보세요. 검증은 안 합니다)</div>';
-    html += '<table class="scratch-pad"><thead><tr><th>자리</th><th>사물함 색</th><th>좋아하는 과목</th></tr></thead><tbody>';
-    ['pos1','pos2','pos3','pos4'].forEach((p, i) => {
-      const c = scratchPad[p].color, s = scratchPad[p].subject;
-      html += '<tr><td>' + (i+1) + '번</td>';
-      html += '<td><button class="scratch-cell" data-pos="'+p+'" data-attr="color">';
-      html += c ? '<span class="dot" style="background:'+COLORS[c].hex+'"></span>'+COLORS[c].name : '?';
-      html += '</button></td>';
-      html += '<td><button class="scratch-cell" data-pos="'+p+'" data-attr="subject">' + (s || '?') + '</button></td></tr>';
-    });
-    return html + '</tbody></table></div>';
-  }
-  function attachScratchListeners() {
-    document.querySelectorAll('.scratch-cell').forEach(el => {
+    if (scratchLog.length === 0) { div.innerHTML = '<span class="inv-empty">아직 가진 것이 없다</span>'; return; }
+    div.innerHTML = scratchLog.map(n => '<span class="inv-item" data-idx="'+n.idx+'"><i class="ti ti-note" aria-hidden="true"></i>'+n.label+'</span>').join('');
+    div.querySelectorAll('.inv-item').forEach(el => {
       el.addEventListener('click', () => {
-        const pos = el.dataset.pos, attr = el.dataset.attr;
-        const cycle = attr === 'color' ? SCRATCH_COLOR_CYCLE : SCRATCH_SUBJECT_CYCLE;
-        const cur = scratchPad[pos][attr];
-        const next = cycle[(cycle.indexOf(cur) + 1) % cycle.length];
-        scratchPad[pos][attr] = next;
-        if (attr === 'color') el.innerHTML = next ? '<span class="dot" style="background:'+COLORS[next].hex+'"></span>'+COLORS[next].name : '?';
-        else el.textContent = next || '?';
+        const idx = parseInt(el.dataset.idx);
+        const n = scratchLog.find(x => x.idx === idx);
+        if (n) showModal('<h3>쪽지</h3><div class="digit-reveal"><div class="digit-reveal-label">비밀번호 '+(n.idx+1)+'번째 자리</div><div class="digit-reveal-num">'+n.digit+'</div></div><div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
       });
     });
   }
-  window.onChalkboardClick = function() { showModal(chalkboardModalHTML()); attachScratchListeners(); };
+  function addNote(idx, digit) {
+    if (scratchLog.find(n => n.idx === idx)) return;
+    scratchLog.push({ idx, digit, label: (idx+1)+'번째: '+digit });
+    renderInventory();
+  }
 
-  // ====================== Fuse box / Circuit ======================
-  function circuitModalHTML() {
-    const solved = state.circuitSolved;
-    let gridHTML = '<div class="circuit-grid">';
-    for (let r = 0; r < 3; r++) {
-      for (let c = 0; c < 3; c++) {
-        gridHTML += '<div class="circuit-tile" id="ctile-'+r+'-'+c+'" onclick="rotateTile('+r+','+c+')">' +
-                    tileSvg(CIRCUIT_LAYOUT[r][c], circuitRotations[r][c], solved) + '</div>';
-      }
-    }
-    gridHTML += '</div>';
-    const statusCls = solved ? 'on' : 'off';
-    const statusTxt = solved ? '⚡ 전원 연결됨! 사물함이 켜졌다.' : '✕ 전원 차단됨';
-    return (
-      '<h3><i class="ti ti-bolt" aria-hidden="true"></i>전기 패널</h3>' +
-      '<p class="circuit-instr">왼쪽에서 들어오는 전원이 오른쪽 사물함까지 이어지도록 회로 타일을 회전시키세요. 타일을 클릭하면 90°씩 돌아갑니다.</p>' +
-      '<div class="circuit-row">' +
-        '<div class="circuit-power-side"><div>전원</div><div class="arrow">▶</div></div>' +
-        gridHTML +
-        '<div class="circuit-out-side"><div class="arrow">▶</div><div>사물함</div></div>' +
+  function digitRevealHTML(idx, digit) {
+    return '<div class="digit-reveal"><div class="digit-reveal-label">비밀번호 '+(idx+1)+'번째 자리</div><div class="digit-reveal-num">'+digit+'</div><div class="digit-reveal-pos">획득!</div></div>';
+  }
+
+  // ============ Hint poster ============
+  window.onPosterClick = function() {
+    const reversed = puzzle.lockCode.slice().reverse().join('-');
+    showModal(
+      '<h3><i class="ti ti-clipboard-text" aria-hidden="true"></i>안전수칙 안내문</h3>' +
+      '<div class="poster-content">' +
+        '<div class="poster-h">방과 후 수영장 안전수칙</div>' +
+        '<ul class="poster-list">' +
+          '<li>음주 후 입수 금지</li>' +
+          '<li>양치 후 30분 대기</li>' +
+          '<li>우산 들고 입수 금지</li>' +
+          '<li>다이빙 미숙자 금지</li>' +
+          '<li>물 속에서 핸드폰 사용 금지</li>' +
+        '</ul>' +
+        '<div class="poster-emph">라이프가드 김선생 메모 — 휴가 갑니다. 사물함 4자리 비밀번호는 <strong>' + reversed + '</strong>... 거꾸로 읽어주세요. (보안상)</div>' +
+        '<div class="poster-warn">※ 거꾸로 = 뒤에서부터 앞으로</div>' +
       '</div>' +
-      '<div class="circuit-status '+statusCls+'" id="circuitStatus">' + statusTxt + '</div>' +
       '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>'
     );
+  };
+
+  // ============ Puzzle 1: Scoreboard (5 lanes, ms) ============
+  let sbClicks = [];
+  let sbAttempts = 0;
+  function updateScoreboardSVG() {
+    ['sbT1','sbT2','sbT3','sbT4','sbT5'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = puzzle.lanes[i].time.toFixed(2);
+    });
   }
-
-  window.onFuseBoxClick = function() { showModal(circuitModalHTML()); };
-
-  window.rotateTile = function(r, c) {
-    if (state.circuitSolved) return; // locked after solving
-    circuitRotations[r][c] = (circuitRotations[r][c] + 1) % 4;
-    const tile = document.getElementById('ctile-'+r+'-'+c);
-    if (tile) tile.innerHTML = tileSvg(CIRCUIT_LAYOUT[r][c], circuitRotations[r][c], false);
-    if (isCircuitSolved()) {
-      state.circuitSolved = true;
-      // Re-render all tiles in powered state
-      for (let rr = 0; rr < 3; rr++) {
-        for (let cc = 0; cc < 3; cc++) {
-          const t = document.getElementById('ctile-'+rr+'-'+cc);
-          if (t) t.innerHTML = tileSvg(CIRCUIT_LAYOUT[rr][cc], circuitRotations[rr][cc], true);
+  window.onScoreboardClick = function() {
+    if (state.scoreboardSolved) {
+      showModal('<h3>점수판 — 완료 <span class="puzzle-solved-badge">해결</span></h3>' + digitRevealHTML(0, puzzle.d1) + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+      return;
+    }
+    let rows = '';
+    puzzle.lanes.forEach(L => {
+      const idx = sbClicks.indexOf(L.num);
+      const rank = idx >= 0 ? (idx + 1) + '위' : '?';
+      const cls = idx >= 0 ? 'sb-row picked' : 'sb-row';
+      rows += '<div class="'+cls+'" data-lane="'+L.num+'"><span>레인 '+L.num+'</span><span>'+L.time.toFixed(2)+'초</span><span class="sb-rank">'+rank+'</span></div>';
+    });
+    showModal(
+      '<h3><i class="ti ti-trophy" aria-hidden="true"></i>전광판 — 5레인 정렬 (밀리초)</h3>' +
+      '<p class="puzzle-instr">가장 <strong>빠른 레인</strong>부터 차례로 클릭하세요. 0.01초 차이까지 구분해야 합니다. 하나라도 틀리면 처음부터.</p>' +
+      '<div class="scoreboard-tbl"><div class="sb-header">★ 오늘의 기록표 ★</div>' + rows + '</div>' +
+      '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>'
+    );
+    document.querySelectorAll('.sb-row[data-lane]').forEach(el => {
+      el.addEventListener('click', () => {
+        const lane = parseInt(el.dataset.lane);
+        if (sbClicks.includes(lane) || state.scoreboardSolved) return;
+        sbClicks.push(lane);
+        playClick();
+        if (sbClicks.length === 5) {
+          const correctOrder = puzzle.lanes.slice().sort((a,b) => a.time - b.time).map(L => L.num);
+          if (JSON.stringify(sbClicks) === JSON.stringify(correctOrder)) {
+            state.scoreboardSolved = true;
+            playChime(); playWhistle();
+            addNote(0, puzzle.d1);
+            updateProgress();
+            setTimeout(() => {
+              showModal('<h3>점수판 — 정렬 완료! <span class="puzzle-solved-badge">해결</span></h3>' +
+                '<p>전광판이 깜빡이며 한 자리 숫자가 떠올랐다.</p>' + digitRevealHTML(0, puzzle.d1) +
+                '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+            }, 400);
+          } else {
+            playBuzz();
+            sbAttempts++;
+            setTimeout(() => { sbClicks = []; window.onScoreboardClick(); }, 900);
+          }
+        } else {
+          window.onScoreboardClick();
         }
-      }
-      const st = document.getElementById('circuitStatus');
-      if (st) { st.className = 'circuit-status on'; st.textContent = '⚡ 전원 연결됨! 사물함이 켜졌다.'; }
-      document.getElementById('fuseStatus').setAttribute('fill', '#0F6E56');
-      updateLockerDigitsInSVG();
-      log('전기 패널의 회로가 연결되었다. 사물함 표시기에 불이 들어왔다.');
-    }
+      });
+    });
   };
 
-  // ====================== Lockers ======================
-  window.onLockersClick = function() {
-    if (state.circuitSolved) {
-      log('사물함 문이 잠겨있다. 각 문에 한 자리 숫자가 또렷이 보인다. 누구의 것인지는 추리해야 한다.');
-    } else {
-      log('사물함 문이 잠겨있다. 표시기에 불이 들어와 있지 않아 숫자가 보이지 않는다. 전기가 끊긴 듯하다.');
-    }
-  };
+  // ============ Puzzle 2: Simon Says (6 rounds, faster) ============
+  const SIMON_COLORS = ['red','green','yellow','blue'];
+  const SIMON_TONES = { red: 261.63, green: 329.63, yellow: 392.00, blue: 523.25 };
+  const SIMON_TARGET = 6;
+  const SIMON_PACE = 500; // faster (was 650)
+  let simonSeq = [];
+  let simonInput = [];
+  let simonRound = 0;
+  let simonState = 'idle';
 
-  // ====================== Plant / Desk / Backpack ======================
-  window.onPlantClick = function() {
-    if (!state.plantChecked) {
-      state.plantChecked = true; state.hasSmallKey = true; addItem('small_key');
-      document.getElementById('plantGroup').style.display = 'none';
-      document.getElementById('plantDugGroup').style.display = '';
-      log('화분 흙을 헤집어보니, 작고 낡은 황동 열쇠가 묻혀있었다.');
-    } else { log('화분 속에는 더 이상 아무것도 없다.'); }
-  };
-  function drawerNoteHTML() {
-    return '<div class="note-paper"><strong>' + DRAWER_CLUE + '</strong>' +
-           '<span class="note-instr">※ 비밀번호: 1번 자리부터 4번 자리까지, 각 자리의 사물함 숫자를 차례로 입력.</span></div>';
+  function simonReset() { simonSeq = []; simonInput = []; simonRound = 0; simonState = 'idle'; }
+
+  function simonRenderRoundDots() {
+    let h = '<div class="simon-round-disp">';
+    for (let i = 1; i <= SIMON_TARGET; i++) {
+      h += '<div class="simon-round-dot ' + (i <= simonRound - 1 ? 'passed' : '') + '"></div>';
+    }
+    return h + '</div>';
   }
-  function backpackNoteHTML() { return '<div class="note-paper"><strong>' + BACKPACK_CLUE + '</strong></div>'; }
-  window.onDeskClick = function() {
-    if (state.drawerOpened) {
-      showModal('<h3><i class="ti ti-notes" aria-hidden="true"></i>서랍 속 쪽지</h3>' + drawerNoteHTML() + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
-    } else if (state.hasSmallKey) {
-      state.drawerOpened = true; addItem('note');
-      showModal('<h3><i class="ti ti-notes" aria-hidden="true"></i>서랍이 열렸다</h3><p style="font-size:13px;color:var(--color-text-secondary);">작은 열쇠가 서랍에 딱 맞았다. 색이 바랜 쪽지가 있다.</p>' + drawerNoteHTML() + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
-    } else { log('선생님 책상이다. 서랍은 굳게 잠겨있다. 작은 열쇠가 있어야 열겠다.'); }
+
+  window.onSimonClick = function() {
+    if (state.simonSolved) {
+      showModal('<h3>호루라기 시퀀스 — 완료 <span class="puzzle-solved-badge">해결</span></h3>' + digitRevealHTML(1, puzzle.d2) + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+      return;
+    }
+    simonReset();
+    const grid = SIMON_COLORS.map(c => '<div class="simon-panel '+c+'" id="sp-'+c+'" onclick="simonClick(\''+c+'\')"></div>').join('');
+    showModal(
+      '<h3><i class="ti ti-music" aria-hidden="true"></i>호루라기 시퀀스 — 6라운드</h3>' +
+      '<p class="puzzle-instr">시퀀스가 더 빨라졌습니다. ' + SIMON_TARGET + '라운드 통과 시 클리어. 한 번이라도 틀리면 처음부터.</p>' +
+      '<div class="simon-board"><div class="simon-grid">' + grid + '</div></div>' +
+      '<div class="simon-status" id="simonStatus">준비 완료. 시작하세요.</div>' +
+      simonRenderRoundDots() +
+      '<div class="modal-actions"><button onclick="simonStart()" class="primary" id="simonStartBtn">▶ 시작</button><button onclick="closeModal()">닫기</button></div>'
+    );
   };
-  window.onBackpackClick = function() {
-    if (!state.backpackChecked) {
-      state.backpackChecked = true; addItem('bp_note');
-      document.getElementById('backpackGroup').style.display = 'none';
-      document.getElementById('backpackOpenGroup').style.display = '';
-      showModal('<h3><i class="ti ti-school" aria-hidden="true"></i>가방 속 쪽지</h3><p style="font-size:13px;color:var(--color-text-secondary);">누군가 가방에 작은 쪽지를 남겨두었다.</p>' + backpackNoteHTML() + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
-    } else {
-      showModal('<h3><i class="ti ti-school" aria-hidden="true"></i>가방 속 쪽지</h3>' + backpackNoteHTML() + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+
+  window.simonStart = function() {
+    if (simonState === 'showing') return;
+    simonSeq = []; simonInput = []; simonRound = 0;
+    simonNextRound();
+  };
+
+  function simonNextRound() {
+    simonRound++;
+    simonInput = [];
+    if (simonRound > SIMON_TARGET) {
+      state.simonSolved = true;
+      addNote(1, puzzle.d2);
+      updateProgress();
+      playChime(); playWhistle();
+      setTimeout(() => {
+        showModal('<h3>호루라기 시퀀스 — 클리어! <span class="puzzle-solved-badge">해결</span></h3>' +
+          '<p>6라운드를 모두 통과했다. 호루라기에서 승리 멜로디가 울려퍼졌다.</p>' + digitRevealHTML(1, puzzle.d2) +
+          '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+      }, 800);
+      return;
+    }
+    simonSeq.push(SIMON_COLORS[Math.floor(Math.random() * 4)]);
+    simonState = 'showing';
+    const st = document.getElementById('simonStatus');
+    if (st) { st.textContent = '라운드 ' + simonRound + ' / ' + SIMON_TARGET + ' — 잘 보세요...'; st.classList.remove('error'); }
+    const btn = document.getElementById('simonStartBtn');
+    if (btn) btn.disabled = true;
+    setTimeout(() => simonPlay(0), 500);
+  }
+
+  function simonPlay(idx) {
+    if (idx >= simonSeq.length) {
+      simonState = 'awaiting';
+      const st = document.getElementById('simonStatus');
+      if (st) st.textContent = '이제 따라하세요 (' + simonSeq.length + '개)';
+      return;
+    }
+    simonFlash(simonSeq[idx]);
+    setTimeout(() => simonPlay(idx + 1), SIMON_PACE);
+  }
+
+  function simonFlash(color) {
+    playTone(SIMON_TONES[color], 0.28, 'triangle', 0.15);
+    const el = document.getElementById('sp-' + color);
+    if (!el) return;
+    el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 260);
+  }
+
+  window.simonClick = function(color) {
+    if (simonState !== 'awaiting') return;
+    simonFlash(color);
+    simonInput.push(color);
+    const idx = simonInput.length - 1;
+    if (color !== simonSeq[idx]) {
+      simonState = 'idle';
+      playBuzz();
+      const st = document.getElementById('simonStatus');
+      if (st) { st.textContent = '✗ 틀렸어요! 라운드 ' + simonRound + '에서 실패. 처음부터.'; st.classList.add('error'); }
+      const btn = document.getElementById('simonStartBtn');
+      if (btn) btn.disabled = false;
+      simonSeq = []; simonInput = []; simonRound = 0;
+      return;
+    }
+    if (simonInput.length === simonSeq.length) {
+      simonState = 'idle';
+      setTimeout(() => simonNextRound(), 450);
     }
   };
 
-  // ====================== Painting / Safe / Door ======================
+  // ============ Puzzle 3: 3-Jug Water ============
+  const JUG_CAP = { a: 7, b: 5, c: 3 };
+  let jugLevels = { a: 0, b: 0, c: 0 };
+
+  function jugRender() {
+    ['a','b','c'].forEach(k => {
+      const pct = (jugLevels[k] / JUG_CAP[k]) * 100;
+      const wEl = document.getElementById('jugWater' + k.toUpperCase());
+      const vEl = document.getElementById('jugVal' + k.toUpperCase());
+      if (wEl) wEl.style.height = pct + '%';
+      if (vEl) vEl.textContent = jugLevels[k] + 'L';
+    });
+  }
+
+  function jugHeight(cap) { return 'height: ' + (cap * 18) + 'px;'; }
+
+  window.onFountainClick = function() {
+    if (state.jugSolved) {
+      showModal('<h3>음수대 — 완료 <span class="puzzle-solved-badge">해결</span></h3>' + digitRevealHTML(2, puzzle.d3) + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+      return;
+    }
+    showModal(
+      '<h3><i class="ti ti-droplet" aria-hidden="true"></i>음수대 — 3통 부피 측정</h3>' +
+      '<p class="puzzle-instr">세 개의 컵: <strong>7L (A)</strong>, <strong>5L (B)</strong>, <strong>3L (C)</strong>. 채우기·비우기·따르기 12가지 조작으로 정확한 양을 만드세요.</p>' +
+      '<div class="jug-target">목표: <strong>7L 컵(A)에 정확히 ' + puzzle.jugTarget + 'L</strong> 담기</div>' +
+      '<div class="jugs-area">' +
+        '<div class="jug-wrap"><div class="jug-label">A (7L)</div><div class="jug" style="' + jugHeight(7) + '"><div class="jug-water" id="jugWaterA" style="height:0%"></div></div><div class="jug-volume" id="jugValA">0L</div></div>' +
+        '<div class="jug-wrap"><div class="jug-label">B (5L)</div><div class="jug" style="' + jugHeight(5) + '"><div class="jug-water" id="jugWaterB" style="height:0%"></div></div><div class="jug-volume" id="jugValB">0L</div></div>' +
+        '<div class="jug-wrap"><div class="jug-label">C (3L)</div><div class="jug" style="' + jugHeight(3) + '"><div class="jug-water" id="jugWaterC" style="height:0%"></div></div><div class="jug-volume" id="jugValC">0L</div></div>' +
+      '</div>' +
+      '<div class="jug-actions-h">— 채우기 —</div>' +
+      '<div class="jug-actions">' +
+        '<button onclick="jugAct(\'fA\')">A 채우기</button>' +
+        '<button onclick="jugAct(\'fB\')">B 채우기</button>' +
+        '<button onclick="jugAct(\'fC\')">C 채우기</button>' +
+      '</div>' +
+      '<div class="jug-actions-h">— 비우기 —</div>' +
+      '<div class="jug-actions">' +
+        '<button onclick="jugAct(\'eA\')">A 비우기</button>' +
+        '<button onclick="jugAct(\'eB\')">B 비우기</button>' +
+        '<button onclick="jugAct(\'eC\')">C 비우기</button>' +
+      '</div>' +
+      '<div class="jug-actions-h">— 따르기 (왼쪽 → 오른쪽) —</div>' +
+      '<div class="jug-actions">' +
+        '<button onclick="jugAct(\'AB\')">A → B</button>' +
+        '<button onclick="jugAct(\'AC\')">A → C</button>' +
+        '<button onclick="jugAct(\'BA\')">B → A</button>' +
+        '<button onclick="jugAct(\'BC\')">B → C</button>' +
+        '<button onclick="jugAct(\'CA\')">C → A</button>' +
+        '<button onclick="jugAct(\'CB\')">C → B</button>' +
+      '</div>' +
+      '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>'
+    );
+    setTimeout(jugRender, 30);
+  };
+
+  window.jugAct = function(act) {
+    playTone(180 + Math.random()*40, 0.13, 'sine', 0.07);
+    const pour = (from, to) => {
+      const t = Math.min(jugLevels[from], JUG_CAP[to] - jugLevels[to]);
+      jugLevels[from] -= t; jugLevels[to] += t;
+    };
+    if (act === 'fA') jugLevels.a = JUG_CAP.a;
+    else if (act === 'fB') jugLevels.b = JUG_CAP.b;
+    else if (act === 'fC') jugLevels.c = JUG_CAP.c;
+    else if (act === 'eA') jugLevels.a = 0;
+    else if (act === 'eB') jugLevels.b = 0;
+    else if (act === 'eC') jugLevels.c = 0;
+    else if (act === 'AB') pour('a','b');
+    else if (act === 'AC') pour('a','c');
+    else if (act === 'BA') pour('b','a');
+    else if (act === 'BC') pour('b','c');
+    else if (act === 'CA') pour('c','a');
+    else if (act === 'CB') pour('c','b');
+    jugRender();
+    if (jugLevels.a === puzzle.jugTarget) {
+      state.jugSolved = true;
+      addNote(2, puzzle.d3);
+      updateProgress();
+      playSplash();
+      setTimeout(() => playChime(), 300);
+      setTimeout(() => {
+        showModal('<h3>음수대 — 정확! <span class="puzzle-solved-badge">해결</span></h3>' +
+          '<p>찰랑. 정확한 부피. 음수대 옆 작은 패널이 열리며 종이가 떨어졌다.</p>' + digitRevealHTML(2, puzzle.d3) +
+          '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+      }, 600);
+    }
+  };
+
+  // ============ Puzzle 4: 4-digit Combo Lock ============
+  let dialValues = [0, 0, 0, 0];
+  function dialRender() {
+    for (let i = 0; i < 4; i++) {
+      const el = document.getElementById('dialVal' + i);
+      if (el) el.textContent = dialValues[i];
+    }
+  }
+  window.onLockerClick = function() {
+    if (state.lockSolved) {
+      showModal('<h3>라이프가드 사물함 — 열림 <span class="puzzle-solved-badge">해결</span></h3>' +
+        '<p style="font-size:13px;color:var(--color-text-secondary);">사물함 안의 쪽지.</p>' +
+        digitRevealHTML(3, puzzle.d4) + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+      return;
+    }
+    let dialsHTML = '';
+    for (let i = 0; i < 4; i++) {
+      dialsHTML += '<div class="dial"><button class="dial-btn" onclick="rotateDial('+i+',1)">▲</button><div class="dial-window" id="dialVal'+i+'">0</div><button class="dial-btn" onclick="rotateDial('+i+',-1)">▼</button></div>';
+    }
+    showModal(
+      '<h3><i class="ti ti-lock" aria-hidden="true"></i>라이프가드 사물함 — 4자리 다이얼</h3>' +
+      '<p class="puzzle-instr">4자리 비밀번호를 맞추세요. (힌트는 안전수칙 안내문에 있지만, <strong>거꾸로</strong> 적혀있어요.)</p>' +
+      '<div class="dial-row">' + dialsHTML + '</div>' +
+      '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>'
+    );
+    setTimeout(dialRender, 30);
+  };
+  window.rotateDial = function(idx, dir) {
+    dialValues[idx] = (dialValues[idx] + dir + 10) % 10;
+    playClick();
+    dialRender();
+    if (dialValues.join('') === puzzle.lockCode.join('')) {
+      state.lockSolved = true;
+      addNote(3, puzzle.d4);
+      updateProgress();
+      playChime();
+      setTimeout(() => {
+        showModal('<h3>사물함 — 열림! <span class="puzzle-solved-badge">해결</span></h3>' +
+          '<p>철컥. 사물함 안에 쪽지가 있다.</p>' +
+          digitRevealHTML(3, puzzle.d4) + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+      }, 500);
+    }
+  };
+
+  // ============ Painting / Safe / Door ============
   window.onPaintingClick = function() {
     if (!state.paintingMoved) {
       state.paintingMoved = true;
       document.getElementById('paintingGroup').style.display = 'none';
       document.getElementById('safeGroup').style.display = '';
-      log('액자가 살짝 비스듬했다. 옆으로 밀어내자, 벽 속에 숨겨진 금고가 모습을 드러냈다.');
-    } else { window.onSafeClick(); }
+      log('트로피 액자를 옆으로 밀자, 벽 속에 숨겨진 금고가 모습을 드러냈다.');
+    } else window.onSafeClick();
   };
+
   window.onSafeClick = function() {
     if (state.safeOpened) { log('금고는 이미 텅 비어있다.'); return; }
     showModal(
       '<h3>금고 잠금장치</h3>' +
-      '<p style="font-size:13px;color:var(--color-text-secondary);">4자리 비밀번호 — 1번 자리부터 4번 자리까지, 사물함 숫자를 차례로.</p>' +
+      '<p class="puzzle-instr">4자리 비밀번호 — 점수판 → 호루라기 → 음수대 → 사물함 순서대로 입력.</p>' +
       '<div class="code-row">' +
         '<input type="text" maxlength="1" class="code-digit" id="d1" inputmode="numeric">' +
         '<input type="text" maxlength="1" class="code-digit" id="d2" inputmode="numeric">' +
@@ -654,67 +895,126 @@
   window.trySafeCode = function() {
     const code = ['d1','d2','d3','d4'].map(id => document.getElementById(id).value).join('');
     if (code === puzzle.code) {
-      state.safeOpened = true; addItem('golden_key'); closeModal();
-      log('철컥. 금고가 열렸다. 안에는 교실 출입문 열쇠가 들어있었다.');
+      state.safeOpened = true; closeModal();
+      playChime(); setTimeout(playChime, 400);
+      log('철컥. 금고가 열렸다. 출입문 열쇠를 발견했다.');
       const sd = document.getElementById('safeDoor'); if (sd) sd.setAttribute('fill', '#1F4A2E');
     } else {
       state.wrongAttempts += 1;
+      playBuzz();
       const a = state.wrongAttempts;
+      if (a >= 5) playWhistle();
+      const remaining = [];
+      if (!state.scoreboardSolved) remaining.push('점수판');
+      if (!state.simonSolved) remaining.push('호루라기');
+      if (!state.jugSolved) remaining.push('음수대');
+      if (!state.lockSolved) remaining.push('사물함');
       let hint;
-      if (a === 1)      hint = '비밀번호가 틀렸다.';
-      else if (a === 2) hint = '딸칵... 잠금이 단단하다.';
-      else if (a === 3) hint = '사물함에 전기가 들어와 있는가? 단서는 모두 모았는가?';
-      else if (a === 4) hint = '7개 단서로 모든 자리의 색깔이 유일하게 정해진다.';
-      else if (a === 5) hint = '1번 자리부터 차례로, 그 자리의 사물함 색에 적힌 숫자를 입력.';
-      else              hint = '추리 메모표를 채우면서 다시. 칠판을 보자.';
+      if (remaining.length > 0) hint = '아직 ' + remaining.join(', ') + ' 퍼즐을 풀지 않았어요.';
+      else if (a >= 5) hint = '⚠ 라이프가드 김선생이 어디선가 호루라기를 분다... 소지품의 쪽지를 다시 확인하세요.';
+      else if (a <= 2) hint = '비밀번호가 틀렸다.';
+      else hint = '쪽지의 자리별 숫자를 차례로 입력했나요?';
       document.getElementById('codeMsg').textContent = hint;
       ['d1','d2','d3','d4'].forEach(id => document.getElementById(id).value = '');
       document.getElementById('d1').focus();
     }
   };
+
   window.onDoorClick = function() {
     if (state.won) return;
-    if (state.inv.includes('golden_key')) {
+    if (state.safeOpened) {
       state.won = true;
+      playChime(); setTimeout(playWhistle, 400);
       const a = state.wrongAttempts;
-      let rating;
-      if (a === 0) rating = '단 한 번의 실수도 없이 완벽한 추리.';
-      else if (a <= 2) rating = '약간의 시행착오 끝에.';
-      else if (a <= 5) rating = '몇 번의 헛수고 끝에.';
-      else rating = '꽤 많은 시도 끝에 마침내.';
-      showModal('<div class="win-title">탈출 성공</div><p>열쇠가 자물쇠와 딸각 맞물렸다. 교실 문이 천천히 열리며, 복도의 불빛이 들이쳤다.</p><p style="color:var(--color-text-secondary);font-size:13px;">'+rating+' 회로를 잇고, 사물함의 주인들을 추리해내고, 학교 밖으로. (틀린 비밀번호 '+a+'회)</p><div class="modal-actions" style="margin-top:14px;"><button onclick="restart()">다시 도전</button></div>');
-    } else { log('교실 문이 단단히 잠겨있다. 특별한 열쇠가 필요해 보인다.'); }
+      let stars, rating;
+      if (a === 0) { stars = '★★★★★'; rating = '단 한 번의 실수도 없이! 완벽한 추리.'; }
+      else if (a <= 2) { stars = '★★★★☆'; rating = '약간의 시행착오 끝에.'; }
+      else if (a <= 5) { stars = '★★★☆☆'; rating = '몇 번의 헛수고 끝에.'; }
+      else if (a <= 10) { stars = '★★☆☆☆'; rating = '꽤 많은 시도 끝에.'; }
+      else { stars = '★☆☆☆☆'; rating = '라이프가드가 호루라기를 자주 불었지만.'; }
+      showModal('<div class="win-title">🏆 탈출 성공</div>' +
+        '<div class="stars">'+stars+'</div>' +
+        '<p>4개의 까다로운 퍼즐을 모두 풀고 금고를 열었다. EXIT 문이 열리며 복도의 형광등이 환하게 비춘다.</p>' +
+        '<p style="color:var(--color-text-secondary);font-size:13px;">'+rating+' 방과 후 수영장을 정복했다. (틀린 비밀번호 ' + a + '회)</p>' +
+        '<div class="modal-actions" style="margin-top:14px;"><button onclick="restart()" class="primary">다시 도전</button></div>');
+    } else {
+      log('출입문이 단단히 잠겨있다. 금고 안의 열쇠가 필요할 것 같다.');
+    }
   };
 
-  function onInvClick(item) {
-    if (item === 'note') showModal('<h3><i class="ti ti-notes" aria-hidden="true"></i>서랍 쪽지</h3>' + drawerNoteHTML() + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
-    else if (item === 'bp_note') showModal('<h3><i class="ti ti-school" aria-hidden="true"></i>가방 쪽지</h3>' + backpackNoteHTML() + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
-    else if (item === 'small_key') log('작고 낡은 황동 열쇠다. 작은 자물쇠에 맞을 것 같다.');
-    else if (item === 'golden_key') log('교실 출입문 열쇠다.');
-  }
+  // ============ Easter eggs ============
+  window.onPoolClick = function() {
+    state.poolClicks++;
+    playSplash();
+    const c = state.poolClicks;
+    if (c === 1) log('물이 차가워 보인다. 손가락만 살짝... 첨벙.');
+    else if (c === 2) log('물 속에 동전 같은 게 반짝인다.');
+    else if (c === 3) log('수영해서 가져올까... 안전수칙 #4.');
+    else if (c === 5) log('자꾸 물을 만지면 김선생이 (휴가지에서 원격으로?) 호루라기 분다.');
+    else if (c === 7) log('물 속 동전을 자세히 보니... 200원짜리다. 더 무시할 만하다.');
+    else if (c === 10) log('🎉 [업적] 수영장 만지작 마스터 — 끝까지 안 들어갔다.');
+    else log('그만 좀 만져요!');
+  };
+  window.onDivingBoardClick = function() {
+    playWhistle();
+    log('"다이빙 미숙자 금지!" 어디선가 호루라기 소리.');
+    const board = document.querySelector('[onclick="onDivingBoardClick()"]');
+    if (board) { board.classList.add('shake'); setTimeout(() => board.classList.remove('shake'), 400); }
+  };
+  window.onLifeRingClick = function() {
+    playTone(500, 0.15, 'sine', 0.1);
+    const ring = document.getElementById('lifeRingGroup');
+    if (ring) {
+      ring.classList.remove('lifering-spinning');
+      void ring.offsetWidth;
+      ring.classList.add('lifering-spinning');
+    }
+    log('라이프링이 빙글빙글. 시원해 보인다.');
+  };
+  window.onDuckClick = function() {
+    state.duckClicks++;
+    playQuack();
+    if (state.duckClicks === 1) log('"꽥!" 노란 고무 오리가 물 위에서 꽥꽥거린다.');
+    else if (state.duckClicks === 3) log('"꽥꽥꽥!" 오리가 신났다.');
+    else if (state.duckClicks === 5) log('🎉 [업적] 오리 친구 — 고무 오리의 친구가 됐다.');
+    else log('"꽥!"');
+  };
+  window.onClockClick = function() {
+    state.clockClicks++;
+    playTick();
+    if (state.clockClicks === 1) log('째깍째깍. 벽시계가 3시 5분을 가리킨다. 방과 후 시간.');
+    else if (state.clockClicks === 3) log('시계는 여전히 3시 5분. 멈춘 건가?');
+    else log('째깍.');
+  };
+  window.onChairClick = function() {
+    state.chairClicks++;
+    playWhistle();
+    if (state.chairClicks === 1) log('"라이프가드 자리에 앉지 마세요!" 보이지 않는 누군가가 외친다.');
+    else log('의자는 휴가다.');
+  };
 
+  // ============ Restart ============
   window.restart = function() {
     puzzle = generatePuzzle();
-    randomizeCircuit();
-    state = { inv: [], hasSmallKey: false, plantChecked: false, drawerOpened: false, backpackChecked: false, circuitSolved: false, paintingMoved: false, safeOpened: false, wrongAttempts: 0, won: false };
-    scratchPad = { pos1: { color: null, subject: null }, pos2: { color: null, subject: null }, pos3: { color: null, subject: null }, pos4: { color: null, subject: null } };
-    document.getElementById('plantGroup').style.display = '';
-    document.getElementById('plantDugGroup').style.display = 'none';
-    document.getElementById('backpackGroup').style.display = '';
-    document.getElementById('backpackOpenGroup').style.display = 'none';
+    resetState();
     document.getElementById('paintingGroup').style.display = '';
     document.getElementById('safeGroup').style.display = 'none';
-    document.getElementById('fuseStatus').setAttribute('fill', '#A32D2D');
     const sd = document.getElementById('safeDoor'); if (sd) sd.setAttribute('fill', '#2A2A2A');
-    updateLockerDigitsInSVG();
+    updateScoreboardSVG();
+    updateProgress();
     renderInventory();
     closeModal();
-    log('방과 후, 텅 빈 교실에서 깨어났다. 사물함은 어둡고, 칠판에는 분필 자국이 보인다. 단서를 모으고 사물함에 전기를 통하게 해야 할 것 같다.');
+    log('방과 후, 수영장은 텅 비었고 라이프가드도 휴가다. 4개의 까다로운 퍼즐을 풀어 4자리 비밀번호를 알아내고 탈출해야 한다.');
   };
 
   document.getElementById('restartBtn').addEventListener('click', window.restart);
   document.getElementById('modalOverlay').addEventListener('click', (e) => { if (e.target.id === 'modalOverlay') closeModal(); });
-  updateLockerDigitsInSVG();
+
+  puzzle = generatePuzzle();
+  resetState();
+  updateScoreboardSVG();
+  updateProgress();
+  renderInventory();
 })();
 </script>
 </body>
