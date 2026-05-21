@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>방과 후 교실 — 방탈출 (난이도 ↑↑↑↑)</title>
+<title>방과 후 교실 — 방탈출</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
   :root {
@@ -29,74 +29,81 @@
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --color-text-primary: #ECEBE6;
-      --color-text-secondary: #B4B2A9;
-      --color-text-tertiary: #888780;
-      --color-text-info: #85B7EB;
-      --color-text-danger: #F09595;
-      --color-text-success: #5DCAA5;
-      --color-background-page: #1C1B18;
-      --color-background-primary: #2A2A27;
-      --color-background-secondary: #222220;
-      --color-background-tertiary: #34332F;
-      --color-background-info: #0C447C;
-      --color-border-tertiary: rgba(255,255,255,0.15);
-      --color-border-secondary: rgba(255,255,255,0.3);
+      --color-text-primary: #ECEBE6; --color-text-secondary: #B4B2A9; --color-text-tertiary: #888780;
+      --color-text-info: #85B7EB; --color-text-danger: #F09595; --color-text-success: #5DCAA5;
+      --color-background-page: #1C1B18; --color-background-primary: #2A2A27; --color-background-secondary: #222220;
+      --color-background-tertiary: #34332F; --color-background-info: #0C447C;
+      --color-border-tertiary: rgba(255,255,255,0.15); --color-border-secondary: rgba(255,255,255,0.3);
     }
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body { font-family: var(--font-sans); color: var(--color-text-primary); background: var(--color-background-page); min-height: 100vh; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
   .wrap { width: 100%; max-width: 720px; }
-  button { font-family: inherit; font-size: 13px; padding: 8px 14px; background: transparent; color: var(--color-text-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); cursor: pointer; transition: background 0.15s, transform 0.05s; }
+  button { font-family: inherit; font-size: 13px; padding: 8px 14px; background: transparent; color: var(--color-text-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); cursor: pointer; transition: background 0.15s; }
   button:hover { background: var(--color-background-secondary); }
-  button:active { transform: scale(0.98); }
 
   .escape-game { padding: 1rem 0; }
   .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 12px; flex-wrap: wrap; }
   .game-title { font-size: 18px; font-weight: 500; }
   .game-sub { font-size: 13px; color: var(--color-text-secondary); margin-left: 8px; }
   .room { position: relative; width: 100%; aspect-ratio: 17 / 9; border-radius: var(--border-radius-lg); overflow: hidden; border: 0.5px solid var(--color-border-tertiary); background: #D9C9B0; }
-  .room svg { display: block; width: 100%; height: 100%; transition: filter 0.5s ease; }
-  .room.lamp-off svg { filter: brightness(0.45) saturate(0.55) hue-rotate(-8deg); }
+  .room svg { display: block; width: 100%; height: 100%; }
   .hotspot { cursor: pointer; transition: filter 0.15s; }
-  .hotspot:hover { filter: brightness(1.15); }
+  .hotspot:hover { filter: brightness(1.13); }
   .message-log { margin-top: 12px; padding: 14px 16px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); min-height: 58px; font-size: 14px; line-height: 1.6; }
   .inventory { margin-top: 12px; padding: 12px 14px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); }
   .inventory-title { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px; }
   .inventory-items { display: flex; gap: 8px; flex-wrap: wrap; min-height: 32px; align-items: center; }
-  .inv-item { padding: 6px 12px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s; }
+  .inv-item { padding: 6px 12px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
   .inv-item:hover { background: var(--color-background-tertiary); }
   .inv-empty { color: var(--color-text-tertiary); font-size: 13px; }
-  .modal-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; z-index: 10; padding: 16px; overflow-y: auto; }
-  .modal { background: var(--color-background-primary); padding: 20px 22px; border-radius: var(--border-radius-lg); max-width: 400px; width: 100%; border: 0.5px solid var(--color-border-tertiary); max-height: calc(100% - 8px); overflow-y: auto; }
-  .modal h3 { margin: 0 0 4px; font-size: 16px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
-  .modal .modal-state { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 10px; display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--color-background-secondary); }
-  .modal .modal-state.dark { background: #1A1A19; color: #D4B43A; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: var(--color-background-primary); padding: 22px 24px; border-radius: var(--border-radius-lg); max-width: 480px; width: 100%; max-height: calc(100vh - 40px); overflow-y: auto; border: 0.5px solid var(--color-border-tertiary); }
+  .modal h3 { margin: 0 0 6px; font-size: 16px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
   .modal p { margin: 6px 0; font-size: 14px; line-height: 1.55; }
-  .note-paper { margin: 12px 0; padding: 16px 18px; background: #F5EAC8; color: #3A2818; border: 0.5px solid #B89860; border-radius: var(--border-radius-md); font-family: var(--font-serif); font-size: 14px; line-height: 1.85; box-shadow: inset 0 0 12px rgba(120,80,30,0.08); }
-  .note-paper .note-title { font-size: 13px; letter-spacing: 1px; text-align: center; border-bottom: 0.5px solid #B89860; padding-bottom: 8px; margin-bottom: 10px; font-style: normal; }
-  .note-paper .note-order { font-family: var(--font-mono); font-size: 16px; letter-spacing: 2px; text-align: center; margin: 12px 0; color: #5A3010; font-weight: 500; }
-  .note-paper .note-verse { font-style: italic; text-align: center; margin: 4px 0; }
-  .note-paper .note-foot { font-size: 11px; color: #6A5535; margin-top: 14px; text-align: center; letter-spacing: 0.5px; }
-  .timetable { margin: 14px 0; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); overflow: hidden; }
-  .timetable-row { display: grid; grid-template-columns: 16px 50px 1fr; gap: 10px; align-items: center; padding: 8px 12px; font-size: 13px; border-bottom: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); }
-  .timetable-row:last-child { border-bottom: none; }
-  .timetable-swatch { width: 14px; height: 14px; border-radius: 3px; border: 0.5px solid rgba(0,0,0,0.2); }
-  .timetable-period { font-weight: 500; color: var(--color-text-secondary); font-size: 12px; }
-  .timetable-subject { color: var(--color-text-primary); }
-  .lockers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0; }
-  .locker-card { padding: 10px 6px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); text-align: center; background: var(--color-background-secondary); position: relative; }
-  .locker-letter { position: absolute; top: 6px; right: 8px; font-family: var(--font-mono); font-size: 11px; color: var(--color-text-tertiary); font-weight: 500; }
-  .locker-door { width: 26px; height: 38px; margin: 0 auto 5px; border-radius: 2px; border: 0.5px solid rgba(0,0,0,0.3); position: relative; }
-  .locker-door::after { content: ''; position: absolute; right: 2px; top: 22px; width: 2px; height: 6px; background: rgba(0,0,0,0.4); border-radius: 1px; }
-  .locker-label { font-size: 11px; color: var(--color-text-secondary); }
-  .locker-num { font-size: 17px; font-weight: 500; color: var(--color-text-primary); margin-top: 2px; font-family: var(--font-mono); letter-spacing: 1px; }
+
+  .chalkboard-display { background: linear-gradient(to bottom, #1F3F2E, #2A4A35); color: #E8E4D8; padding: 18px 20px; border-radius: 6px; font-family: var(--font-serif); border: 5px solid #5A3825; box-shadow: inset 0 0 30px rgba(255,255,255,0.04); margin: 12px 0; }
+  .chalk-title { text-align: center; font-size: 13px; letter-spacing: 1.5px; border-bottom: 0.5px dashed rgba(232,228,216,0.3); padding-bottom: 8px; margin-bottom: 12px; font-style: italic; color: #FFE680; }
+  .chalk-clues { list-style: none; padding: 0; margin: 0; font-size: 13.5px; line-height: 1.7; }
+  .chalk-clues li { padding: 4px 0 4px 16px; position: relative; }
+  .chalk-clues li::before { content: "·"; position: absolute; left: 0; color: #FFE680; font-size: 20px; line-height: 1; }
+
+  .note-paper { margin: 12px 0; padding: 14px 16px; background: #F5EAC8; color: #3A2818; border: 0.5px solid #B89860; border-radius: var(--border-radius-md); font-family: var(--font-serif); font-size: 14px; line-height: 1.75; box-shadow: inset 0 0 12px rgba(120,80,30,0.08); }
+  .note-paper strong { font-weight: 500; }
+  .note-paper .note-instr { display: block; margin-top: 10px; padding-top: 10px; border-top: 0.5px dashed #B89860; font-size: 12px; color: #6A5535; font-style: italic; }
+
+  .scratch-pad-wrap { margin: 14px 0 8px; }
+  .scratch-pad-title { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px; }
+  .scratch-pad { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .scratch-pad th, .scratch-pad td { padding: 5px 4px; text-align: center; border: 0.5px solid var(--color-border-tertiary); }
+  .scratch-pad th { background: var(--color-background-secondary); font-weight: 500; font-size: 12px; color: var(--color-text-secondary); }
+  .scratch-pad td:first-child { background: var(--color-background-secondary); font-weight: 500; color: var(--color-text-secondary); width: 50px; }
+  .scratch-cell { padding: 5px 8px; background: var(--color-background-primary); border: 0.5px dashed var(--color-border-secondary); border-radius: 4px; cursor: pointer; min-width: 80px; font-size: 12px; font-family: inherit; color: var(--color-text-primary); transition: background 0.12s; }
+  .scratch-cell:hover { background: var(--color-background-tertiary); }
+  .scratch-cell .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; margin-right: 5px; border: 0.5px solid rgba(0,0,0,0.25); }
+
+  /* Circuit puzzle UI */
+  .circuit-instr { font-size: 13px; color: var(--color-text-secondary); margin: 10px 0; line-height: 1.6; }
+  .circuit-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 14px 0; }
+  .circuit-power-side, .circuit-out-side { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: var(--color-text-secondary); }
+  .circuit-power-side .arrow, .circuit-out-side .arrow { font-size: 16px; color: var(--color-text-info); }
+  .circuit-grid { display: grid; grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(3, 60px); gap: 3px; background: #2A2A2A; padding: 6px; border-radius: 6px; }
+  .circuit-tile { background: #E5E2D8; cursor: pointer; transition: transform 0.06s; position: relative; }
+  .circuit-tile:hover { background: #EDEAE0; }
+  .circuit-tile:active { transform: scale(0.93); }
+  .circuit-tile svg { display: block; width: 100%; height: 100%; }
+  .circuit-status { text-align: center; padding: 10px 12px; font-size: 14px; margin: 12px 0 4px; border-radius: 6px; font-weight: 500; }
+  .circuit-status.off { background: #5A2A2A; color: #FFC0C0; }
+  .circuit-status.on { background: #2A5A2A; color: #C0FFC0; }
+
   .code-row { display: flex; gap: 8px; justify-content: center; margin: 14px 0 6px; }
   .code-digit { width: 44px; height: 52px; text-align: center; font-size: 22px; font-weight: 500; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); color: var(--color-text-primary); font-family: inherit; }
   .code-digit:focus { outline: none; box-shadow: 0 0 0 2px var(--color-border-info); }
   .code-msg { font-size: 13px; text-align: center; min-height: 18px; color: var(--color-text-danger); margin-top: 4px; line-height: 1.4; }
-  .modal-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 12px; }
   .modal-actions button { flex: 1; }
   .modal-actions button.primary { background: var(--color-background-info); color: var(--color-text-info); border-color: var(--color-border-info); }
   .win-title { font-size: 20px; font-weight: 500; color: var(--color-text-success); text-align: center; margin-bottom: 8px; }
@@ -105,13 +112,13 @@
 </head>
 <body>
 <div class="wrap">
-<h2 class="sr-only">한국어 방탈출 게임. 방과 후 교실에서 사물함, 책상, 가방, 화분, 액자, 벽시계, 시간표, 스탠드를 조사해 단서를 모으고, 4자리 비밀번호를 풀고 교실 문을 열어 탈출하세요.</h2>
+<h2 class="sr-only">방과 후 교실 회로+논리 추리 방탈출. 전기 패널의 회로를 연결해 사물함에 전기를 공급하고, 칠판 단서로 사물함 주인을 추리해 4자리 비밀번호를 풀어 교실을 탈출하세요.</h2>
 
 <div class="escape-game">
   <div class="game-header">
     <div>
       <span class="game-title">방과 후 교실</span>
-      <span class="game-sub">난이도 ↑↑↑↑ — 시간표를 거슬러, 멈춰버린 자에게</span>
+      <span class="game-sub">회로를 잇고, 사물함의 주인을 찾아라</span>
     </div>
     <button id="restartBtn">처음부터</button>
   </div>
@@ -124,128 +131,124 @@
       <line x1="0" y1="318" x2="680" y2="318" stroke="#6A5840" stroke-width="0.4"/>
       <line x1="0" y1="348" x2="680" y2="348" stroke="#6A5840" stroke-width="0.4"/>
 
-      <!-- chalkboard decoration above lockers -->
-      <rect x="20" y="20" width="140" height="50" fill="#2A4A35" stroke="#3A2818" stroke-width="2"/>
-      <rect x="22" y="22" width="136" height="46" fill="none" stroke="#5A7A65" stroke-width="0.3"/>
-      <text x="90" y="48" font-size="9" fill="#D8E4D8" text-anchor="middle" font-style="italic" font-family="serif">방과 후 — 정숙</text>
-
-      <!-- 6 colored lockers -->
-      <g class="hotspot" onclick="onLockersClick()">
-        <rect x="18" y="78" width="146" height="182" fill="#2A2A2A"/>
-        <g stroke="#1A1A1A" stroke-width="0.5">
-          <rect x="22" y="82" width="22" height="174" fill="#C44545"/>
-          <rect x="46" y="82" width="22" height="174" fill="#D4843A"/>
-          <rect x="70" y="82" width="22" height="174" fill="#D4B43A"/>
-          <rect x="94" y="82" width="22" height="174" fill="#4A7A3E"/>
-          <rect x="118" y="82" width="22" height="174" fill="#3B6BA8"/>
-          <rect x="142" y="82" width="22" height="174" fill="#6B4A8B"/>
+      <!-- electric panel / fuse box -->
+      <g class="hotspot" onclick="onFuseBoxClick()">
+        <rect x="22" y="20" width="128" height="50" fill="#7A7060" stroke="#3A2818" stroke-width="1.5"/>
+        <rect x="26" y="24" width="120" height="42" fill="#8A7560" stroke="#3A2818" stroke-width="0.5"/>
+        <rect x="30" y="28" width="86" height="7" fill="#1A1A19"/>
+        <text x="73" y="33.5" font-size="5" fill="#E8E4D8" text-anchor="middle" font-weight="bold">전기 패널 — 위험</text>
+        <circle id="fuseStatus" cx="135" cy="32" r="3.5" fill="#A32D2D"/>
+        <g fill="#3A3A3A">
+          <rect x="32" y="44" width="13" height="18" stroke="#1A1A1A" stroke-width="0.4"/>
+          <rect x="50" y="44" width="13" height="18" stroke="#1A1A1A" stroke-width="0.4"/>
+          <rect x="68" y="44" width="13" height="18" stroke="#1A1A1A" stroke-width="0.4"/>
+          <rect x="86" y="44" width="13" height="18" stroke="#1A1A1A" stroke-width="0.4"/>
+          <rect x="104" y="44" width="13" height="18" stroke="#1A1A1A" stroke-width="0.4"/>
+          <rect x="122" y="44" width="13" height="18" stroke="#1A1A1A" stroke-width="0.4"/>
         </g>
-        <g fill="#444">
-          <rect x="37" y="160" width="3" height="10" rx="1"/>
-          <rect x="61" y="160" width="3" height="10" rx="1"/>
-          <rect x="85" y="160" width="3" height="10" rx="1"/>
-          <rect x="109" y="160" width="3" height="10" rx="1"/>
-          <rect x="133" y="160" width="3" height="10" rx="1"/>
-          <rect x="157" y="160" width="3" height="10" rx="1"/>
+        <g fill="#C44545">
+          <rect x="36" y="49" width="5" height="8" rx="1"/>
+          <rect x="54" y="49" width="5" height="8" rx="1"/>
+          <rect x="72" y="49" width="5" height="8" rx="1"/>
+          <rect x="90" y="49" width="5" height="8" rx="1"/>
+          <rect x="108" y="49" width="5" height="8" rx="1"/>
+          <rect x="126" y="49" width="5" height="8" rx="1"/>
+        </g>
+      </g>
+
+      <!-- 4 lockers -->
+      <g class="hotspot" onclick="onLockersClick()">
+        <rect x="18" y="80" width="142" height="180" fill="#2A2A2A"/>
+        <g stroke="#1A1A1A" stroke-width="0.5">
+          <rect x="22" y="84" width="33" height="172" fill="#C44545"/>
+          <rect x="57" y="84" width="33" height="172" fill="#D4B43A"/>
+          <rect x="92" y="84" width="33" height="172" fill="#4A7A3E"/>
+          <rect x="127" y="84" width="33" height="172" fill="#3B6BA8"/>
         </g>
         <g stroke="#1A1A1A" stroke-width="0.4" opacity="0.7">
-          <line x1="26" y1="89" x2="40" y2="89"/><line x1="26" y1="92" x2="40" y2="92"/>
-          <line x1="50" y1="89" x2="64" y2="89"/><line x1="50" y1="92" x2="64" y2="92"/>
-          <line x1="74" y1="89" x2="88" y2="89"/><line x1="74" y1="92" x2="88" y2="92"/>
-          <line x1="98" y1="89" x2="112" y2="89"/><line x1="98" y1="92" x2="112" y2="92"/>
-          <line x1="122" y1="89" x2="136" y2="89"/><line x1="122" y1="92" x2="136" y2="92"/>
-          <line x1="146" y1="89" x2="160" y2="89"/><line x1="146" y1="92" x2="160" y2="92"/>
+          <line x1="27" y1="91" x2="50" y2="91"/><line x1="27" y1="94" x2="50" y2="94"/>
+          <line x1="62" y1="91" x2="85" y2="91"/><line x1="62" y1="94" x2="85" y2="94"/>
+          <line x1="97" y1="91" x2="120" y2="91"/><line x1="97" y1="94" x2="120" y2="94"/>
+          <line x1="132" y1="91" x2="155" y2="91"/><line x1="132" y1="94" x2="155" y2="94"/>
         </g>
+        <!-- digit plates (start "off"/dim) -->
+        <g>
+          <rect id="plateRed" x="28" y="122" width="22" height="22" fill="#5A5A5A" stroke="#666" stroke-width="0.5"/>
+          <text id="lockerDigitRed" x="39" y="139" font-size="14" font-weight="bold" font-family="monospace" text-anchor="middle" fill="#3A3A3A">?</text>
+          <rect id="plateYellow" x="63" y="122" width="22" height="22" fill="#5A5A5A" stroke="#666" stroke-width="0.5"/>
+          <text id="lockerDigitYellow" x="74" y="139" font-size="14" font-weight="bold" font-family="monospace" text-anchor="middle" fill="#3A3A3A">?</text>
+          <rect id="plateGreen" x="98" y="122" width="22" height="22" fill="#5A5A5A" stroke="#666" stroke-width="0.5"/>
+          <text id="lockerDigitGreen" x="109" y="139" font-size="14" font-weight="bold" font-family="monospace" text-anchor="middle" fill="#3A3A3A">?</text>
+          <rect id="plateBlue" x="133" y="122" width="22" height="22" fill="#5A5A5A" stroke="#666" stroke-width="0.5"/>
+          <text id="lockerDigitBlue" x="144" y="139" font-size="14" font-weight="bold" font-family="monospace" text-anchor="middle" fill="#3A3A3A">?</text>
+        </g>
+        <g fill="#444">
+          <rect x="48" y="195" width="3" height="10" rx="1"/>
+          <rect x="83" y="195" width="3" height="10" rx="1"/>
+          <rect x="118" y="195" width="3" height="10" rx="1"/>
+          <rect x="153" y="195" width="3" height="10" rx="1"/>
+        </g>
+      </g>
+
+      <!-- chalkboard -->
+      <g class="hotspot" onclick="onChalkboardClick()">
+        <rect x="175" y="45" width="245" height="158" fill="#5A3825" stroke="#3A1818" stroke-width="2.5"/>
+        <rect x="185" y="55" width="225" height="138" fill="#2A4A35" stroke="#3A2818" stroke-width="0.5"/>
+        <line x1="195" y1="75" x2="285" y2="75" stroke="#E8E4D8" stroke-width="0.4" opacity="0.5"/>
+        <line x1="200" y1="85" x2="270" y2="85" stroke="#E8E4D8" stroke-width="0.4" opacity="0.35"/>
+        <line x1="195" y1="95" x2="260" y2="95" stroke="#E8E4D8" stroke-width="0.4" opacity="0.25"/>
+        <text x="297" y="124" font-size="14" font-family="serif" font-style="italic" fill="#E8E4D8" text-anchor="middle">사물함의 주인을 찾아라</text>
+        <text x="297" y="148" font-size="9" font-family="serif" fill="#FFE680" text-anchor="middle" opacity="0.9">— 클릭하여 단서 보기 —</text>
+        <line x1="200" y1="165" x2="295" y2="165" stroke="#E8E4D8" stroke-width="0.4" opacity="0.4"/>
+        <line x1="200" y1="175" x2="275" y2="175" stroke="#E8E4D8" stroke-width="0.4" opacity="0.3"/>
+        <line x1="200" y1="183" x2="250" y2="183" stroke="#E8E4D8" stroke-width="0.4" opacity="0.2"/>
+        <rect x="175" y="200" width="245" height="6" fill="#3A2818"/>
+        <rect x="195" y="201.5" width="10" height="3" fill="#E8E4D8" rx="1"/>
+        <rect x="225" y="202" width="6" height="2.5" fill="#D44545" rx="1"/>
       </g>
 
       <!-- framed picture (hides safe) -->
       <g id="paintingGroup" class="hotspot" onclick="onPaintingClick()">
-        <rect x="200" y="65" width="170" height="135" fill="#4A3825"/>
-        <rect x="210" y="75" width="150" height="115" fill="#E8DBC8"/>
-        <rect x="235" y="130" width="100" height="55" fill="#A85040"/>
-        <path d="M 230 130 L 285 110 L 340 130 Z" fill="#7A3525"/>
-        <rect x="278" y="160" width="14" height="25" fill="#3A1810"/>
+        <rect x="445" y="78" width="100" height="115" fill="#4A3825"/>
+        <rect x="453" y="86" width="84" height="99" fill="#E8DBC8"/>
+        <rect x="468" y="135" width="50" height="42" fill="#A85040"/>
+        <path d="M 463 135 L 493 117 L 523 135 Z" fill="#7A3525"/>
+        <rect x="486" y="158" width="14" height="19" fill="#3A1810"/>
         <g fill="#3B6BA8">
-          <rect x="245" y="142" width="8" height="8"/>
-          <rect x="258" y="142" width="8" height="8"/>
-          <rect x="304" y="142" width="8" height="8"/>
-          <rect x="317" y="142" width="8" height="8"/>
+          <rect x="473" y="145" width="6" height="6"/>
+          <rect x="483" y="145" width="6" height="6"/>
+          <rect x="507" y="145" width="6" height="6"/>
         </g>
-        <circle cx="320" cy="100" r="7" fill="#D4B43A"/>
-        <text x="265" y="103" font-size="8" font-family="serif" fill="#5A3525">우리 학교</text>
+        <text x="495" y="108" font-size="7" font-family="serif" fill="#5A3525" text-anchor="middle">우리 학교</text>
       </g>
 
       <!-- safe (hidden) -->
       <g id="safeGroup" class="hotspot" style="display:none;" onclick="onSafeClick()">
-        <rect x="225" y="80" width="125" height="105" fill="#3A3A3A" stroke="#1A1A1A" stroke-width="2"/>
-        <rect id="safeDoor" x="238" y="92" width="100" height="82" fill="#2A2A2A" stroke="#1A1A1A"/>
-        <circle cx="320" cy="132" r="11" fill="#5A5A5A" stroke="#1A1A1A" stroke-width="1.5"/>
-        <circle cx="320" cy="132" r="6" fill="#3A3A3A"/>
-        <rect x="250" y="105" width="50" height="16" rx="2" fill="#0F0F0F" stroke="#1A1A1A"/>
-        <text x="275" y="116" font-size="10" fill="#5A8A5A" text-anchor="middle" font-family="monospace">CODE</text>
-        <rect x="340" y="88" width="6" height="10" fill="#1A1A1A"/>
-        <rect x="340" y="170" width="6" height="10" fill="#1A1A1A"/>
-      </g>
-
-      <!-- timetable wall poster (NEW clue) -->
-      <g class="hotspot" onclick="onTimetableClick()">
-        <rect x="386" y="72" width="56" height="80" fill="#FFFEF5" stroke="#666" stroke-width="0.8"/>
-        <rect x="386" y="72" width="56" height="80" fill="none" stroke="#AAA" stroke-width="0.3"/>
-        <text x="414" y="84" font-size="7" text-anchor="middle" font-weight="bold" fill="#222">시간표</text>
-        <line x1="389" y1="88" x2="439" y2="88" stroke="#666" stroke-width="0.4"/>
-        <g font-size="5" fill="#555" font-family="sans-serif">
-          <circle cx="394" cy="96" r="1.6" fill="#C44545"/><text x="400" y="98">1교시</text>
-          <circle cx="394" cy="106" r="1.6" fill="#D4843A"/><text x="400" y="108">2교시</text>
-          <circle cx="394" cy="116" r="1.6" fill="#D4B43A"/><text x="400" y="118">3교시</text>
-          <circle cx="394" cy="126" r="1.6" fill="#4A7A3E"/><text x="400" y="128">4교시</text>
-          <circle cx="394" cy="136" r="1.6" fill="#3B6BA8"/><text x="400" y="138">5교시</text>
-          <circle cx="394" cy="146" r="1.6" fill="#6B4A8B"/><text x="400" y="148">6교시</text>
-        </g>
-      </g>
-
-      <!-- wall clock -->
-      <g class="hotspot" onclick="onClockClick()">
-        <circle cx="475" cy="110" r="32" fill="#F5EFD8" stroke="#4A3825" stroke-width="2"/>
-        <circle cx="475" cy="110" r="32" fill="none" stroke="#8B6F47" stroke-width="0.5"/>
-        <g stroke="#4A3825" stroke-width="1.2" stroke-linecap="round">
-          <line x1="475" y1="81" x2="475" y2="85"/>
-          <line x1="489.5" y1="84.9" x2="488" y2="88.4"/>
-          <line x1="500.1" y1="95.5" x2="496.6" y2="97"/>
-          <line x1="504" y1="110" x2="500" y2="110"/>
-          <line x1="500.1" y1="124.5" x2="496.6" y2="123"/>
-          <line x1="489.5" y1="135.1" x2="488" y2="131.6"/>
-          <line x1="475" y1="139" x2="475" y2="135"/>
-          <line x1="460.5" y1="135.1" x2="462" y2="131.6"/>
-          <line x1="449.9" y1="124.5" x2="453.4" y2="123"/>
-          <line x1="446" y1="110" x2="450" y2="110"/>
-          <line x1="449.9" y1="95.5" x2="453.4" y2="97"/>
-          <line x1="460.5" y1="84.9" x2="462" y2="88.4"/>
-        </g>
-        <text x="475" y="94" font-size="7" fill="#4A3825" text-anchor="middle" font-family="serif" font-weight="bold">XII</text>
-        <text x="496" y="113" font-size="7" fill="#4A3825" text-anchor="middle" font-family="serif" font-weight="bold">III</text>
-        <text x="475" y="129" font-size="7" fill="#4A3825" text-anchor="middle" font-family="serif" font-weight="bold">VI</text>
-        <text x="454" y="113" font-size="7" fill="#4A3825" text-anchor="middle" font-family="serif" font-weight="bold">IX</text>
-        <line id="clockMinuteHand" x1="475" y1="110" x2="475" y2="84" stroke="#3A2818" stroke-width="1.5" stroke-linecap="round"/>
-        <line id="clockHourHand" x1="475" y1="110" x2="491" y2="110" stroke="#3A2818" stroke-width="2.8" stroke-linecap="round"/>
-        <circle cx="475" cy="110" r="2.5" fill="#3A2818"/>
+        <rect x="450" y="85" width="92" height="98" fill="#3A3A3A" stroke="#1A1A1A" stroke-width="2"/>
+        <rect id="safeDoor" x="460" y="95" width="74" height="78" fill="#2A2A2A" stroke="#1A1A1A"/>
+        <circle cx="518" cy="132" r="9" fill="#5A5A5A" stroke="#1A1A1A" stroke-width="1.3"/>
+        <circle cx="518" cy="132" r="5" fill="#3A3A3A"/>
+        <rect x="468" y="105" width="42" height="14" rx="2" fill="#0F0F0F" stroke="#1A1A1A"/>
+        <text x="489" y="115" font-size="8" fill="#5A8A5A" text-anchor="middle" font-family="monospace">CODE</text>
+        <rect x="534" y="92" width="5" height="8" fill="#1A1A1A"/>
+        <rect x="534" y="168" width="5" height="8" fill="#1A1A1A"/>
       </g>
 
       <!-- classroom door -->
       <g class="hotspot" onclick="onDoorClick()">
-        <rect x="535" y="48" width="125" height="222" fill="#7A5F3F" stroke="#3A2818" stroke-width="2"/>
-        <rect x="547" y="60" width="46" height="92" fill="#6A4F30" stroke="#3A2818"/>
-        <rect x="603" y="60" width="46" height="92" fill="#6A4F30" stroke="#3A2818"/>
-        <!-- door window (small school door window) -->
-        <rect x="556" y="72" width="28" height="68" fill="#A8C8D8" stroke="#3A2818" stroke-width="0.8"/>
-        <line x1="556" y1="106" x2="584" y2="106" stroke="#3A2818" stroke-width="0.5"/>
-        <line x1="570" y1="72" x2="570" y2="140" stroke="#3A2818" stroke-width="0.5"/>
-        <rect x="612" y="72" width="28" height="68" fill="#A8C8D8" stroke="#3A2818" stroke-width="0.8"/>
-        <line x1="612" y1="106" x2="640" y2="106" stroke="#3A2818" stroke-width="0.5"/>
-        <line x1="626" y1="72" x2="626" y2="140" stroke="#3A2818" stroke-width="0.5"/>
-        <rect x="547" y="160" width="46" height="92" fill="#6A4F30" stroke="#3A2818"/>
-        <rect x="603" y="160" width="46" height="92" fill="#6A4F30" stroke="#3A2818"/>
-        <circle cx="551" cy="200" r="4" fill="#D4B43A" stroke="#8A7020"/>
-        <rect x="548" y="203" width="6" height="14" fill="#D4B43A" stroke="#8A7020"/>
+        <rect x="555" y="48" width="115" height="222" fill="#7A5F3F" stroke="#3A2818" stroke-width="2"/>
+        <rect x="567" y="60" width="42" height="84" fill="#6A4F30" stroke="#3A2818"/>
+        <rect x="619" y="60" width="42" height="84" fill="#6A4F30" stroke="#3A2818"/>
+        <rect x="572" y="72" width="32" height="68" fill="#A8C8D8" stroke="#3A2818" stroke-width="0.6"/>
+        <line x1="572" y1="106" x2="604" y2="106" stroke="#3A2818" stroke-width="0.4"/>
+        <line x1="588" y1="72" x2="588" y2="140" stroke="#3A2818" stroke-width="0.4"/>
+        <rect x="624" y="72" width="32" height="68" fill="#A8C8D8" stroke="#3A2818" stroke-width="0.6"/>
+        <line x1="624" y1="106" x2="656" y2="106" stroke="#3A2818" stroke-width="0.4"/>
+        <line x1="640" y1="72" x2="640" y2="140" stroke="#3A2818" stroke-width="0.4"/>
+        <rect x="567" y="152" width="42" height="100" fill="#6A4F30" stroke="#3A2818"/>
+        <rect x="619" y="152" width="42" height="100" fill="#6A4F30" stroke="#3A2818"/>
+        <circle cx="571" cy="200" r="4" fill="#D4B43A" stroke="#8A7020"/>
+        <rect x="568" y="203" width="6" height="14" fill="#D4B43A" stroke="#8A7020"/>
       </g>
 
       <!-- teacher's desk -->
@@ -258,60 +261,46 @@
         <circle cx="262" cy="258" r="2.5" fill="#D4B43A"/>
       </g>
 
-      <!-- desk lamp -->
-      <g id="lampGroup" class="hotspot" onclick="onLampClick()">
-        <ellipse cx="370" cy="221" rx="14" ry="3" fill="#3A2818"/>
-        <rect x="358" y="216" width="24" height="6" rx="2" fill="#3A2818"/>
-        <rect x="368" y="186" width="4" height="32" fill="#3A2818"/>
-        <path d="M 353 188 L 387 188 L 381 168 L 359 168 Z" fill="#5A7A8B" stroke="#3A2818" stroke-width="1"/>
-        <circle id="lampGlow" cx="370" cy="190" r="22" fill="#FFE680" opacity="0.45"/>
-        <circle id="lampBulb" cx="370" cy="189" r="4" fill="#FFE680" stroke="#D4B43A"/>
-      </g>
-
       <!-- plant pot -->
       <g id="plantGroup" class="hotspot" onclick="onPlantClick()">
-        <ellipse cx="475" cy="305" rx="22" ry="4" fill="#4A3220" opacity="0.5"/>
-        <path d="M 455 270 L 495 270 L 491 302 L 459 302 Z" fill="#A85A4A" stroke="#6A3525" stroke-width="1.2"/>
-        <ellipse cx="475" cy="270" rx="20" ry="3" fill="#7A4030"/>
-        <ellipse cx="468" cy="245" rx="9" ry="14" fill="#4A7A3E" transform="rotate(-25 468 245)"/>
-        <ellipse cx="482" cy="247" rx="9" ry="14" fill="#5A8A4E" transform="rotate(20 482 247)"/>
-        <ellipse cx="475" cy="240" rx="10" ry="12" fill="#3E6A35"/>
-        <path d="M 475 255 L 475 268" stroke="#3E5025" stroke-width="1.5"/>
+        <ellipse cx="470" cy="305" rx="22" ry="4" fill="#4A3220" opacity="0.5"/>
+        <path d="M 450 270 L 490 270 L 486 302 L 454 302 Z" fill="#A85A4A" stroke="#6A3525" stroke-width="1.2"/>
+        <ellipse cx="470" cy="270" rx="20" ry="3" fill="#7A4030"/>
+        <ellipse cx="463" cy="245" rx="9" ry="14" fill="#4A7A3E" transform="rotate(-25 463 245)"/>
+        <ellipse cx="477" cy="247" rx="9" ry="14" fill="#5A8A4E" transform="rotate(20 477 247)"/>
+        <ellipse cx="470" cy="240" rx="10" ry="12" fill="#3E6A35"/>
+        <path d="M 470 255 L 470 268" stroke="#3E5025" stroke-width="1.5"/>
       </g>
       <g id="plantDugGroup" style="display:none;">
-        <ellipse cx="475" cy="305" rx="22" ry="4" fill="#4A3220" opacity="0.5"/>
-        <path d="M 455 270 L 495 270 L 491 302 L 459 302 Z" fill="#A85A4A" stroke="#6A3525" stroke-width="1.2"/>
-        <ellipse cx="475" cy="270" rx="20" ry="3" fill="#5A3020"/>
-        <ellipse cx="468" cy="245" rx="9" ry="14" fill="#4A7A3E" transform="rotate(-25 468 245)" opacity="0.5"/>
-        <ellipse cx="482" cy="247" rx="9" ry="14" fill="#5A8A4E" transform="rotate(20 482 247)" opacity="0.5"/>
-        <ellipse cx="475" cy="240" rx="10" ry="12" fill="#3E6A35" opacity="0.5"/>
+        <ellipse cx="470" cy="305" rx="22" ry="4" fill="#4A3220" opacity="0.5"/>
+        <path d="M 450 270 L 490 270 L 486 302 L 454 302 Z" fill="#A85A4A" stroke="#6A3525" stroke-width="1.2"/>
+        <ellipse cx="470" cy="270" rx="20" ry="3" fill="#5A3020"/>
+        <ellipse cx="463" cy="245" rx="9" ry="14" fill="#4A7A3E" transform="rotate(-25 463 245)" opacity="0.5"/>
+        <ellipse cx="477" cy="247" rx="9" ry="14" fill="#5A8A4E" transform="rotate(20 477 247)" opacity="0.5"/>
+        <ellipse cx="470" cy="240" rx="10" ry="12" fill="#3E6A35" opacity="0.5"/>
       </g>
 
-      <!-- student backpack on floor (replaces rug) -->
+      <!-- student backpack -->
       <g id="backpackGroup" class="hotspot" onclick="onBackpackClick()">
-        <ellipse cx="305" cy="345" rx="44" ry="4" fill="#3A2818" opacity="0.45"/>
-        <path d="M 270 298 Q 270 292 280 292 L 330 292 Q 340 292 340 298 L 343 340 Q 343 348 333 348 L 277 348 Q 267 348 267 340 Z" fill="#3B5BA8" stroke="#1F3F70" stroke-width="1"/>
-        <path d="M 277 318 L 333 318 L 336 340 Q 336 343 333 343 L 277 343 Q 274 343 274 340 Z" fill="#2F4878" stroke="#1F3F70" stroke-width="0.8"/>
-        <rect x="300" y="327" width="10" height="3" fill="#D4843A"/>
-        <path d="M 290 292 Q 290 282 300 282 L 310 282 Q 320 282 320 292" fill="none" stroke="#1F3F70" stroke-width="3"/>
-        <circle cx="285" cy="306" r="1.5" fill="#1F3F70"/>
-        <circle cx="325" cy="306" r="1.5" fill="#1F3F70"/>
+        <ellipse cx="310" cy="345" rx="44" ry="4" fill="#3A2818" opacity="0.45"/>
+        <path d="M 275 298 Q 275 292 285 292 L 335 292 Q 345 292 345 298 L 348 340 Q 348 348 338 348 L 282 348 Q 272 348 272 340 Z" fill="#3B5BA8" stroke="#1F3F70" stroke-width="1"/>
+        <path d="M 282 318 L 338 318 L 341 340 Q 341 343 338 343 L 282 343 Q 279 343 279 340 Z" fill="#2F4878" stroke="#1F3F70" stroke-width="0.8"/>
+        <rect x="305" y="327" width="10" height="3" fill="#D4843A"/>
+        <path d="M 295 292 Q 295 282 305 282 L 315 282 Q 325 282 325 292" fill="none" stroke="#1F3F70" stroke-width="3"/>
+        <circle cx="290" cy="306" r="1.5" fill="#1F3F70"/>
+        <circle cx="330" cy="306" r="1.5" fill="#1F3F70"/>
       </g>
       <g id="backpackOpenGroup" style="display:none;">
-        <ellipse cx="305" cy="345" rx="44" ry="4" fill="#3A2818" opacity="0.45"/>
-        <path d="M 270 305 Q 270 295 280 295 L 330 295 Q 340 295 340 305 L 343 340 Q 343 348 333 348 L 277 348 Q 267 348 267 340 Z" fill="#3B5BA8" stroke="#1F3F70" stroke-width="1"/>
-        <path d="M 270 305 Q 285 290 305 290 Q 325 290 340 305 L 340 310 L 270 310 Z" fill="#2F4878" stroke="#1F3F70" stroke-width="0.8"/>
-        <text x="305" y="335" font-size="6" fill="#E8E4D8" text-anchor="middle" font-style="italic">불 꺼야 진실...</text>
+        <ellipse cx="310" cy="345" rx="44" ry="4" fill="#3A2818" opacity="0.45"/>
+        <path d="M 275 305 Q 275 295 285 295 L 335 295 Q 345 295 345 305 L 348 340 Q 348 348 338 348 L 282 348 Q 272 348 272 340 Z" fill="#3B5BA8" stroke="#1F3F70" stroke-width="1"/>
+        <path d="M 275 305 Q 290 290 310 290 Q 330 290 345 305 L 345 310 L 275 310 Z" fill="#2F4878" stroke="#1F3F70" stroke-width="0.8"/>
+        <text x="310" y="333" font-size="6" fill="#E8E4D8" text-anchor="middle" font-style="italic">쪽지를 발견했다</text>
       </g>
     </svg>
-
-    <div class="modal-overlay" id="modalOverlay" style="display:none;">
-      <div class="modal" id="modalBox"></div>
-    </div>
   </div>
 
   <div class="message-log" id="messageLog">
-    방과 후, 텅 빈 교실에서 깨어났다. 문은 잠겨있다. 사물함, 책상, 시간표, 벽시계… 무언가 단서가 숨어있을 것 같다.
+    방과 후, 텅 빈 교실에서 깨어났다. 사물함은 어둡고, 칠판에는 분필 자국이 보인다. 단서를 모으고 사물함에 전기를 통하게 해야 할 것 같다.
   </div>
 
   <div class="inventory">
@@ -321,235 +310,310 @@
     </div>
   </div>
 </div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox"></div>
+</div>
 </div>
 
 <script>
 (function(){
-  const COLORS_ORDER = ['red','orange','yellow','green','blue','purple'];
   const COLORS = {
-    red:    { name: '빨간 사물함', letter: 'R', hex: '#C44545' },
-    orange: { name: '주황 사물함', letter: 'O', hex: '#D4843A' },
-    yellow: { name: '노란 사물함', letter: 'Y', hex: '#D4B43A' },
-    green:  { name: '초록 사물함', letter: 'G', hex: '#4A7A3E' },
-    blue:   { name: '파란 사물함', letter: 'B', hex: '#3B6BA8' },
-    purple: { name: '보라 사물함', letter: 'P', hex: '#6B4A8B' }
+    red:    { name: '빨강',  hex: '#C44545' },
+    yellow: { name: '노랑',  hex: '#D4B43A' },
+    green:  { name: '초록',  hex: '#4A7A3E' },
+    blue:   { name: '파랑',  hex: '#3B6BA8' }
   };
-  const SUBJECTS = ['국어','수학','영어','과학','미술','음악'];
-  const CODE_ORDER = ['yellow','red','green','blue']; // final code uses these in this order
+  const SOLUTION_COLOR = { pos1: 'yellow', pos2: 'green', pos3: 'red', pos4: 'blue' };
 
-  function rand3() { return Math.floor(100 + Math.random() * 900); }
-  function randDigitPos() { return Math.floor(Math.random() * 3) + 1; }
-  function shuffle(arr) {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
+  const CHALKBOARD_CLUES = [
+    '1번 자리(가장 앞) 학생은 수학을 좋아한다.',
+    '노랑 사물함과 초록 사물함은 바로 옆자리에 있다.',
+    '미술을 좋아하는 학생의 사물함은 빨강이다.',
+    '영어를 좋아하는 학생의 바로 옆자리에는 미술을 좋아하는 학생이 앉는다.',
+    '빨강 사물함은 노랑 사물함보다 뒷자리에 있다.'
+  ];
+  const DRAWER_CLUE   = '영어를 좋아하는 학생의 사물함은 초록이다.';
+  const BACKPACK_CLUE = '과학을 좋아하는 학생은 가장 뒷자리(4번)에 앉는다.';
+
+  // --- Circuit puzzle constants ---
+  // Layout uses E = elbow (default T+R), S = straight (default L+R)
+  // Middle row is mostly Straight but with elbow in col 0 — straight middle is broken so player must detour
+  const CIRCUIT_LAYOUT = [
+    ['E','S','E'],
+    ['E','S','E'],
+    ['E','S','E']
+  ];
+  // Solution requires routing around: middle (1,0)/(1,2) are elbows, can't carry L→R straight
+  const TILE_BASE = { E: ['T','R'], S: ['L','R'] };
+  const DIR_ORDER = ['T','R','B','L'];
+
+  function rotateDir(dir, n) {
+    return DIR_ORDER[(DIR_ORDER.indexOf(dir) + n + 4) % 4];
+  }
+  function getTileConnections(type, rotation) {
+    return TILE_BASE[type].map(d => rotateDir(d, rotation));
+  }
+
+  function isCircuitSolved() {
+    const visited = [[false,false,false],[false,false,false],[false,false,false]];
+    const startR = 1, startC = 0;
+    const startConns = getTileConnections(CIRCUIT_LAYOUT[startR][startC], circuitRotations[startR][startC]);
+    if (!startConns.includes('L')) return false;
+    const queue = [[startR, startC, 'L']];
+    visited[startR][startC] = true;
+    while (queue.length) {
+      const [r, c, fromDir] = queue.shift();
+      const conns = getTileConnections(CIRCUIT_LAYOUT[r][c], circuitRotations[r][c]);
+      for (const dir of conns) {
+        if (dir === fromDir) continue;
+        let nr = r, nc = c, neighborDir;
+        if (dir === 'T') { nr = r - 1; neighborDir = 'B'; }
+        else if (dir === 'B') { nr = r + 1; neighborDir = 'T'; }
+        else if (dir === 'L') { nc = c - 1; neighborDir = 'R'; }
+        else if (dir === 'R') { nc = c + 1; neighborDir = 'L'; }
+        if (nr < 0 || nr >= 3 || nc < 0 || nc >= 3) {
+          if (r === 1 && c === 2 && dir === 'R') return true;
+          continue;
+        }
+        if (visited[nr][nc]) continue;
+        const nConns = getTileConnections(CIRCUIT_LAYOUT[nr][nc], circuitRotations[nr][nc]);
+        if (!nConns.includes(neighborDir)) continue;
+        visited[nr][nc] = true;
+        queue.push([nr, nc, neighborDir]);
+      }
     }
-    return a;
+    return false;
+  }
+
+  function randomizeCircuit() {
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 3; c++) {
+        circuitRotations[r][c] = Math.floor(Math.random() * 4);
+      }
+    }
+    // Make sure not already solved on start
+    if (isCircuitSolved()) {
+      circuitRotations[0][0] = (circuitRotations[0][0] + 1) % 4;
+    }
+  }
+
+  function tileSvg(type, rotation, powered) {
+    const size = 60, c = size / 2;
+    const conns = getTileConnections(type, rotation);
+    const color = powered ? '#FFD400' : '#3A3A3A';
+    let lines = '';
+    conns.forEach(d => {
+      let ex, ey;
+      if (d === 'T') { ex = c; ey = 0; }
+      else if (d === 'R') { ex = size; ey = c; }
+      else if (d === 'B') { ex = c; ey = size; }
+      else { ex = 0; ey = c; }
+      lines += '<line x1="'+c+'" y1="'+c+'" x2="'+ex+'" y2="'+ey+'" stroke="'+color+'" stroke-width="10" stroke-linecap="round"/>';
+    });
+    const dot = '<circle cx="'+c+'" cy="'+c+'" r="5" fill="'+color+'"/>';
+    return '<svg viewBox="0 0 '+size+' '+size+'">'+lines+dot+'</svg>';
   }
 
   function generatePuzzle() {
-    // Random assignment: 6 colors → 6 periods (1..6)
-    const shuffled = shuffle(COLORS_ORDER);
-    const periodToColor = {};
-    const colorToPeriod = {};
-    shuffled.forEach((c, i) => {
-      periodToColor[i + 1] = c;
-      colorToPeriod[c] = i + 1;
-    });
-    // The memo will list periods in CODE_ORDER (yellow,red,green,blue) sequence
-    const codePeriods = CODE_ORDER.map(c => colorToPeriod[c]);
-
-    const lampOn = {}, lampOff = {};
-    COLORS_ORDER.forEach(c => {
-      lampOff[c] = rand3();
-      let on; do { on = rand3(); } while (on === lampOff[c]);
-      lampOn[c] = on;
-    });
-    const dp = randDigitPos();
-    const code = CODE_ORDER.map(c => lampOff[c].toString()[dp - 1]).join('');
-    return { periodToColor, colorToPeriod, codePeriods, lampOn, lampOff, digitPos: dp, code };
+    const pool = [1,2,3,4,5,6,7,8,9].sort(() => Math.random() - 0.5).slice(0, 4);
+    const lockerDigits = { red: pool[0], yellow: pool[1], green: pool[2], blue: pool[3] };
+    const code = ['pos1','pos2','pos3','pos4'].map(p => lockerDigits[SOLUTION_COLOR[p]]).join('');
+    return { lockerDigits, code };
   }
 
   let puzzle = generatePuzzle();
+  let circuitRotations = [[0,0,0],[0,0,0],[0,0,0]];
+  randomizeCircuit();
   let state = {
     inv: [], hasSmallKey: false, plantChecked: false,
-    drawerOpened: false, paintingMoved: false, safeOpened: false,
-    lampOn: true, backpackChecked: false, wrongAttempts: 0, won: false
+    drawerOpened: false, backpackChecked: false,
+    circuitSolved: false,
+    paintingMoved: false, safeOpened: false,
+    wrongAttempts: 0, won: false
+  };
+  let scratchPad = {
+    pos1: { color: null, subject: null }, pos2: { color: null, subject: null },
+    pos3: { color: null, subject: null }, pos4: { color: null, subject: null }
   };
 
   const itemNames = {
-    small_key:  { icon: 'ti-key',   name: '작은 열쇠' },
-    note:       { icon: 'ti-notes', name: '쪽지' },
-    golden_key: { icon: 'ti-key',   name: '교실 열쇠' }
+    small_key:  { icon: 'ti-key',    name: '작은 열쇠' },
+    note:       { icon: 'ti-notes',  name: '서랍 쪽지' },
+    bp_note:    { icon: 'ti-note',   name: '가방 쪽지' },
+    golden_key: { icon: 'ti-key',    name: '교실 열쇠' }
   };
-
-  function noteHTML() {
-    const p = puzzle.codePeriods;
-    return (
-      '<div class="note-paper">' +
-        '<div class="note-title">비밀번호 — 네 자리</div>' +
-        '<div class="note-verse">시간표를 거슬러,</div>' +
-        '<div class="note-order">' + p[0] + '교시 &rarr; ' + p[1] + '교시 &rarr; ' + p[2] + '교시 &rarr; ' + p[3] + '교시</div>' +
-        '<div class="note-verse">각 사물함의 세 숫자 중,</div>' +
-        '<div class="note-verse">멈춰버린 자가</div>' +
-        '<div class="note-verse">그 자리를 알려준다.</div>' +
-        '<div class="note-foot">* 빛 아래 보이는 숫자는 거짓이다.</div>' +
-      '</div>'
-    );
-  }
+  const SCRATCH_COLOR_CYCLE   = [null, 'red', 'yellow', 'green', 'blue'];
+  const SCRATCH_SUBJECT_CYCLE = [null, '수학', '영어', '미술', '과학'];
 
   function log(msg) { document.getElementById('messageLog').textContent = msg; }
+  function showModal(html) { document.getElementById('modalBox').innerHTML = html; document.getElementById('modalOverlay').classList.add('show'); }
+  function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+  window.closeModal = closeModal;
 
   function renderInventory() {
     const div = document.getElementById('inventoryItems');
-    if (state.inv.length === 0) {
-      div.innerHTML = '<span class="inv-empty">아직 가진 것이 없다</span>';
-      return;
-    }
+    if (state.inv.length === 0) { div.innerHTML = '<span class="inv-empty">아직 가진 것이 없다</span>'; return; }
     div.innerHTML = state.inv.map(i => {
       const it = itemNames[i];
       return '<span class="inv-item" data-id="'+i+'"><i class="ti '+it.icon+'" aria-hidden="true"></i>'+it.name+'</span>';
     }).join('');
-    div.querySelectorAll('.inv-item').forEach(el => {
-      el.addEventListener('click', () => onInvClick(el.dataset.id));
+    div.querySelectorAll('.inv-item').forEach(el => { el.addEventListener('click', () => onInvClick(el.dataset.id)); });
+  }
+  function addItem(item) { if (!state.inv.includes(item)) { state.inv.push(item); renderInventory(); } }
+
+  function updateLockerDigitsInSVG() {
+    const COLOR_KEYS = ['Red','Yellow','Green','Blue'];
+    const cMap = { Red: 'red', Yellow: 'yellow', Green: 'green', Blue: 'blue' };
+    COLOR_KEYS.forEach(k => {
+      const txt = document.getElementById('lockerDigit'+k);
+      const plt = document.getElementById('plate'+k);
+      if (state.circuitSolved) {
+        txt.textContent = puzzle.lockerDigits[cMap[k]];
+        txt.setAttribute('fill', '#1A1A1A');
+        plt.setAttribute('fill', '#F0E8D0');
+      } else {
+        txt.textContent = '?';
+        txt.setAttribute('fill', '#3A3A3A');
+        plt.setAttribute('fill', '#5A5A5A');
+      }
     });
   }
 
-  function addItem(item) {
-    if (!state.inv.includes(item)) { state.inv.push(item); renderInventory(); }
-  }
-
-  function showModal(html) {
-    document.getElementById('modalBox').innerHTML = html;
-    document.getElementById('modalOverlay').style.display = 'flex';
-  }
-  function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
-  window.closeModal = closeModal;
-
-  function updateClockHand(pos) {
-    const angleDeg = pos * 30;
-    const rad = angleDeg * Math.PI / 180;
-    const cx = 475, cy = 110, len = 17;
-    const x2 = cx + len * Math.sin(rad);
-    const y2 = cy - len * Math.cos(rad);
-    const hand = document.getElementById('clockHourHand');
-    if (hand) { hand.setAttribute('x2', x2.toFixed(2)); hand.setAttribute('y2', y2.toFixed(2)); }
-  }
-
-  window.onBackpackClick = function() {
-    if (!state.backpackChecked) {
-      state.backpackChecked = true;
-      document.getElementById('backpackGroup').style.display = 'none';
-      document.getElementById('backpackOpenGroup').style.display = '';
-      log('가방을 열어보니 누군가 휘갈겨 쓴 작은 쪽지가 있다 — "교실 등이 꺼질 때, 사물함 번호의 진실이 드러난다."');
-    } else {
-      log('가방 안에는 더 이상 단서가 보이지 않는다.');
-    }
-  };
-
-  window.onPlantClick = function() {
-    if (!state.plantChecked) {
-      state.plantChecked = true;
-      state.hasSmallKey = true;
-      addItem('small_key');
-      document.getElementById('plantGroup').style.display = 'none';
-      document.getElementById('plantDugGroup').style.display = '';
-      log('화분의 흙을 헤집어보니, 흙 속에 작고 낡은 황동 열쇠가 묻혀있었다.');
-    } else {
-      log('화분 속에는 더 이상 아무것도 없다.');
-    }
-  };
-
-  window.onDeskClick = function() {
-    if (state.drawerOpened) {
-      showModal(
-        '<h3><i class="ti ti-notes" aria-hidden="true"></i>서랍 속 쪽지</h3>' +
-        noteHTML() +
-        '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>'
-      );
-    } else if (state.hasSmallKey) {
-      state.drawerOpened = true;
-      addItem('note');
-      showModal(
-        '<h3><i class="ti ti-notes" aria-hidden="true"></i>서랍이 열렸다</h3>' +
-        '<p style="font-size:13px;color:var(--color-text-secondary);">작은 열쇠가 서랍에 딱 맞았다. 색이 바랜 쪽지가 들어있다.</p>' +
-        noteHTML() +
-        '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>'
-      );
-    } else {
-      log('튼튼한 선생님 책상이다. 서랍은 굳게 잠겨있고, 위에는 책상 스탠드가 놓여있다.');
-    }
-  };
-
-  window.onLampClick = function() {
-    state.lampOn = !state.lampOn;
-    const room = document.getElementById('room');
-    const bulb = document.getElementById('lampBulb');
-    const glow = document.getElementById('lampGlow');
-    if (state.lampOn) {
-      room.classList.remove('lamp-off');
-      bulb.setAttribute('fill', '#FFE680');
-      bulb.setAttribute('stroke', '#D4B43A');
-      glow.setAttribute('opacity', '0.45');
-      log('스탠드 스위치를 딸각 — 교실에 다시 따뜻한 빛이 들어왔다.');
-    } else {
-      room.classList.add('lamp-off');
-      bulb.setAttribute('fill', '#2A2A2A');
-      bulb.setAttribute('stroke', '#1A1A1A');
-      glow.setAttribute('opacity', '0');
-      log('스탠드 스위치를 딸각 — 교실이 어둠에 잠겼다. 무언가 달라 보이는 것 같다...');
-    }
-  };
-
-  window.onClockClick = function() {
-    const h = puzzle.digitPos;
-    log('벽시계가 ' + h + '시 정각에서 멈춰있다. 시간은 흐르지 않지만, 시침은 ' + h + '을 또렷이 가리키고 있다.');
-  };
-
-  window.onTimetableClick = function() {
-    let rows = '';
-    for (let p = 1; p <= 6; p++) {
-      const c = puzzle.periodToColor[p];
-      const col = COLORS[c];
-      rows +=
-        '<div class="timetable-row">' +
-          '<div class="timetable-swatch" style="background:'+col.hex+'"></div>' +
-          '<div class="timetable-period">'+p+'교시</div>' +
-          '<div class="timetable-subject">'+SUBJECTS[p-1]+'</div>' +
-        '</div>';
-    }
-    showModal(
-      '<h3>시간표</h3>' +
-      '<p style="font-size:13px;color:var(--color-text-secondary);">교시별로 색이 정해져 있다. 사물함 색과 같다.</p>' +
-      '<div class="timetable">' + rows + '</div>' +
+  // ====================== Chalkboard ======================
+  function chalkboardModalHTML() {
+    let cluesHTML = '<ul class="chalk-clues">';
+    CHALKBOARD_CLUES.forEach(c => { cluesHTML += '<li>' + c + '</li>'; });
+    cluesHTML += '</ul>';
+    return (
+      '<h3>칠판</h3>' +
+      '<p style="font-size:13px;color:var(--color-text-secondary);">분필로 단서가 쓰여있다.</p>' +
+      '<div class="chalkboard-display"><div class="chalk-title">[ 사물함의 주인을 찾아라 ]</div>' + cluesHTML + '</div>' +
+      scratchPadHTML() +
       '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>'
     );
-  };
-
-  window.onLockersClick = function() {
-    const nums = state.lampOn ? puzzle.lampOn : puzzle.lampOff;
-    const stateLabel = state.lampOn
-      ? '<span class="modal-state"><i class="ti ti-bulb" aria-hidden="true"></i>교실이 밝다</span>'
-      : '<span class="modal-state dark"><i class="ti ti-bulb-off" aria-hidden="true"></i>교실이 어둡다</span>';
-    let html =
-      '<h3>사물함 6개</h3>' +
-      stateLabel +
-      '<p style="font-size:13px;color:var(--color-text-secondary);margin-top:10px;">각 사물함 문에 세 자릿수가 적혀있다.</p>' +
-      '<div class="lockers-grid">';
-    COLORS_ORDER.forEach(c => {
-      html +=
-        '<div class="locker-card">' +
-          '<div class="locker-letter">'+COLORS[c].letter+'</div>' +
-          '<div class="locker-door" style="background:'+COLORS[c].hex+'"></div>' +
-          '<div class="locker-label">'+COLORS[c].name+'</div>' +
-          '<div class="locker-num">'+nums[c]+'</div>' +
-        '</div>';
+  }
+  function scratchPadHTML() {
+    let html = '<div class="scratch-pad-wrap"><div class="scratch-pad-title">추리 메모 (셀을 클릭해 후보를 채워보세요. 검증은 안 합니다)</div>';
+    html += '<table class="scratch-pad"><thead><tr><th>자리</th><th>사물함 색</th><th>좋아하는 과목</th></tr></thead><tbody>';
+    ['pos1','pos2','pos3','pos4'].forEach((p, i) => {
+      const c = scratchPad[p].color, s = scratchPad[p].subject;
+      html += '<tr><td>' + (i+1) + '번</td>';
+      html += '<td><button class="scratch-cell" data-pos="'+p+'" data-attr="color">';
+      html += c ? '<span class="dot" style="background:'+COLORS[c].hex+'"></span>'+COLORS[c].name : '?';
+      html += '</button></td>';
+      html += '<td><button class="scratch-cell" data-pos="'+p+'" data-attr="subject">' + (s || '?') + '</button></td></tr>';
     });
-    html += '</div><div class="modal-actions"><button onclick="closeModal()">닫기</button></div>';
-    showModal(html);
+    return html + '</tbody></table></div>';
+  }
+  function attachScratchListeners() {
+    document.querySelectorAll('.scratch-cell').forEach(el => {
+      el.addEventListener('click', () => {
+        const pos = el.dataset.pos, attr = el.dataset.attr;
+        const cycle = attr === 'color' ? SCRATCH_COLOR_CYCLE : SCRATCH_SUBJECT_CYCLE;
+        const cur = scratchPad[pos][attr];
+        const next = cycle[(cycle.indexOf(cur) + 1) % cycle.length];
+        scratchPad[pos][attr] = next;
+        if (attr === 'color') el.innerHTML = next ? '<span class="dot" style="background:'+COLORS[next].hex+'"></span>'+COLORS[next].name : '?';
+        else el.textContent = next || '?';
+      });
+    });
+  }
+  window.onChalkboardClick = function() { showModal(chalkboardModalHTML()); attachScratchListeners(); };
+
+  // ====================== Fuse box / Circuit ======================
+  function circuitModalHTML() {
+    const solved = state.circuitSolved;
+    let gridHTML = '<div class="circuit-grid">';
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 3; c++) {
+        gridHTML += '<div class="circuit-tile" id="ctile-'+r+'-'+c+'" onclick="rotateTile('+r+','+c+')">' +
+                    tileSvg(CIRCUIT_LAYOUT[r][c], circuitRotations[r][c], solved) + '</div>';
+      }
+    }
+    gridHTML += '</div>';
+    const statusCls = solved ? 'on' : 'off';
+    const statusTxt = solved ? '⚡ 전원 연결됨! 사물함이 켜졌다.' : '✕ 전원 차단됨';
+    return (
+      '<h3><i class="ti ti-bolt" aria-hidden="true"></i>전기 패널</h3>' +
+      '<p class="circuit-instr">왼쪽에서 들어오는 전원이 오른쪽 사물함까지 이어지도록 회로 타일을 회전시키세요. 타일을 클릭하면 90°씩 돌아갑니다.</p>' +
+      '<div class="circuit-row">' +
+        '<div class="circuit-power-side"><div>전원</div><div class="arrow">▶</div></div>' +
+        gridHTML +
+        '<div class="circuit-out-side"><div class="arrow">▶</div><div>사물함</div></div>' +
+      '</div>' +
+      '<div class="circuit-status '+statusCls+'" id="circuitStatus">' + statusTxt + '</div>' +
+      '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>'
+    );
+  }
+
+  window.onFuseBoxClick = function() { showModal(circuitModalHTML()); };
+
+  window.rotateTile = function(r, c) {
+    if (state.circuitSolved) return; // locked after solving
+    circuitRotations[r][c] = (circuitRotations[r][c] + 1) % 4;
+    const tile = document.getElementById('ctile-'+r+'-'+c);
+    if (tile) tile.innerHTML = tileSvg(CIRCUIT_LAYOUT[r][c], circuitRotations[r][c], false);
+    if (isCircuitSolved()) {
+      state.circuitSolved = true;
+      // Re-render all tiles in powered state
+      for (let rr = 0; rr < 3; rr++) {
+        for (let cc = 0; cc < 3; cc++) {
+          const t = document.getElementById('ctile-'+rr+'-'+cc);
+          if (t) t.innerHTML = tileSvg(CIRCUIT_LAYOUT[rr][cc], circuitRotations[rr][cc], true);
+        }
+      }
+      const st = document.getElementById('circuitStatus');
+      if (st) { st.className = 'circuit-status on'; st.textContent = '⚡ 전원 연결됨! 사물함이 켜졌다.'; }
+      document.getElementById('fuseStatus').setAttribute('fill', '#0F6E56');
+      updateLockerDigitsInSVG();
+      log('전기 패널의 회로가 연결되었다. 사물함 표시기에 불이 들어왔다.');
+    }
   };
 
+  // ====================== Lockers ======================
+  window.onLockersClick = function() {
+    if (state.circuitSolved) {
+      log('사물함 문이 잠겨있다. 각 문에 한 자리 숫자가 또렷이 보인다. 누구의 것인지는 추리해야 한다.');
+    } else {
+      log('사물함 문이 잠겨있다. 표시기에 불이 들어와 있지 않아 숫자가 보이지 않는다. 전기가 끊긴 듯하다.');
+    }
+  };
+
+  // ====================== Plant / Desk / Backpack ======================
+  window.onPlantClick = function() {
+    if (!state.plantChecked) {
+      state.plantChecked = true; state.hasSmallKey = true; addItem('small_key');
+      document.getElementById('plantGroup').style.display = 'none';
+      document.getElementById('plantDugGroup').style.display = '';
+      log('화분 흙을 헤집어보니, 작고 낡은 황동 열쇠가 묻혀있었다.');
+    } else { log('화분 속에는 더 이상 아무것도 없다.'); }
+  };
+  function drawerNoteHTML() {
+    return '<div class="note-paper"><strong>' + DRAWER_CLUE + '</strong>' +
+           '<span class="note-instr">※ 비밀번호: 1번 자리부터 4번 자리까지, 각 자리의 사물함 숫자를 차례로 입력.</span></div>';
+  }
+  function backpackNoteHTML() { return '<div class="note-paper"><strong>' + BACKPACK_CLUE + '</strong></div>'; }
+  window.onDeskClick = function() {
+    if (state.drawerOpened) {
+      showModal('<h3><i class="ti ti-notes" aria-hidden="true"></i>서랍 속 쪽지</h3>' + drawerNoteHTML() + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+    } else if (state.hasSmallKey) {
+      state.drawerOpened = true; addItem('note');
+      showModal('<h3><i class="ti ti-notes" aria-hidden="true"></i>서랍이 열렸다</h3><p style="font-size:13px;color:var(--color-text-secondary);">작은 열쇠가 서랍에 딱 맞았다. 색이 바랜 쪽지가 있다.</p>' + drawerNoteHTML() + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+    } else { log('선생님 책상이다. 서랍은 굳게 잠겨있다. 작은 열쇠가 있어야 열겠다.'); }
+  };
+  window.onBackpackClick = function() {
+    if (!state.backpackChecked) {
+      state.backpackChecked = true; addItem('bp_note');
+      document.getElementById('backpackGroup').style.display = 'none';
+      document.getElementById('backpackOpenGroup').style.display = '';
+      showModal('<h3><i class="ti ti-school" aria-hidden="true"></i>가방 속 쪽지</h3><p style="font-size:13px;color:var(--color-text-secondary);">누군가 가방에 작은 쪽지를 남겨두었다.</p>' + backpackNoteHTML() + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+    } else {
+      showModal('<h3><i class="ti ti-school" aria-hidden="true"></i>가방 속 쪽지</h3>' + backpackNoteHTML() + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+    }
+  };
+
+  // ====================== Painting / Safe / Door ======================
   window.onPaintingClick = function() {
     if (!state.paintingMoved) {
       state.paintingMoved = true;
@@ -558,12 +622,11 @@
       log('액자가 살짝 비스듬했다. 옆으로 밀어내자, 벽 속에 숨겨진 금고가 모습을 드러냈다.');
     } else { window.onSafeClick(); }
   };
-
   window.onSafeClick = function() {
     if (state.safeOpened) { log('금고는 이미 텅 비어있다.'); return; }
     showModal(
       '<h3>금고 잠금장치</h3>' +
-      '<p style="font-size:13px;color:var(--color-text-secondary);">4자리 비밀번호를 입력하세요.</p>' +
+      '<p style="font-size:13px;color:var(--color-text-secondary);">4자리 비밀번호 — 1번 자리부터 4번 자리까지, 사물함 숫자를 차례로.</p>' +
       '<div class="code-row">' +
         '<input type="text" maxlength="1" class="code-digit" id="d1" inputmode="numeric">' +
         '<input type="text" maxlength="1" class="code-digit" id="d2" inputmode="numeric">' +
@@ -571,10 +634,7 @@
         '<input type="text" maxlength="1" class="code-digit" id="d4" inputmode="numeric">' +
       '</div>' +
       '<div class="code-msg" id="codeMsg"></div>' +
-      '<div class="modal-actions">' +
-        '<button onclick="closeModal()">취소</button>' +
-        '<button class="primary" onclick="trySafeCode()">확인</button>' +
-      '</div>'
+      '<div class="modal-actions"><button onclick="closeModal()">취소</button><button class="primary" onclick="trySafeCode()">확인</button></div>'
     );
     setTimeout(() => {
       const digits = ['d1','d2','d3','d4'].map(id => document.getElementById(id));
@@ -591,97 +651,70 @@
       digits[0].focus();
     }, 40);
   };
-
   window.trySafeCode = function() {
     const code = ['d1','d2','d3','d4'].map(id => document.getElementById(id).value).join('');
     if (code === puzzle.code) {
-      state.safeOpened = true;
-      addItem('golden_key');
-      closeModal();
+      state.safeOpened = true; addItem('golden_key'); closeModal();
       log('철컥. 금고가 열렸다. 안에는 교실 출입문 열쇠가 들어있었다.');
-      const safeDoor = document.getElementById('safeDoor');
-      if (safeDoor) safeDoor.setAttribute('fill', '#1F4A2E');
+      const sd = document.getElementById('safeDoor'); if (sd) sd.setAttribute('fill', '#1F4A2E');
     } else {
       state.wrongAttempts += 1;
       const a = state.wrongAttempts;
       let hint;
       if (a === 1)      hint = '비밀번호가 틀렸다.';
       else if (a === 2) hint = '딸칵... 잠금이 단단하다.';
-      else if (a === 3) hint = '쪽지를 다시 보자. 그리고 시간표도.';
-      else if (a === 4) hint = '쪽지는 "교시"를 알려준다. 시간표는 그 교시의 "색"을 알려준다.';
-      else if (a === 5) hint = '어떤 색 사물함을, 어떤 순서로 봐야 할지, 두 단서를 합쳐야 한다.';
-      else if (a === 6) hint = '사물함 번호는 세 자리. 그 중 단 한 자리만이 답이다.';
-      else if (a === 7) hint = '교실 안에서 "멈춰버린 자"는 무엇인가? 시침이 가리키는 숫자가 곧 답의 자리다.';
-      else if (a === 8) hint = '그리고 진짜 사물함 번호는 빛이 꺼졌을 때만 보인다.';
-      else              hint = '쪽지 → 시간표(색) → 어둠 속 사물함 번호 → 시계가 가리키는 자리수. 순서대로.';
+      else if (a === 3) hint = '사물함에 전기가 들어와 있는가? 단서는 모두 모았는가?';
+      else if (a === 4) hint = '7개 단서로 모든 자리의 색깔이 유일하게 정해진다.';
+      else if (a === 5) hint = '1번 자리부터 차례로, 그 자리의 사물함 색에 적힌 숫자를 입력.';
+      else              hint = '추리 메모표를 채우면서 다시. 칠판을 보자.';
       document.getElementById('codeMsg').textContent = hint;
       ['d1','d2','d3','d4'].forEach(id => document.getElementById(id).value = '');
       document.getElementById('d1').focus();
     }
   };
-
   window.onDoorClick = function() {
     if (state.won) return;
     if (state.inv.includes('golden_key')) {
       state.won = true;
       const a = state.wrongAttempts;
       let rating;
-      if (a === 0)      rating = '단 한 번의 실수도 없이 완벽하게.';
-      else if (a <= 2)  rating = '약간의 시행착오 끝에.';
-      else if (a <= 5)  rating = '몇 번의 헛수고 끝에.';
-      else if (a <= 10) rating = '꽤 많은 시도 끝에 마침내.';
-      else              rating = '수많은 시도 끝에 마침내.';
-      showModal(
-        '<div class="win-title">탈출 성공</div>' +
-        '<p>열쇠가 자물쇠와 딸각 맞물렸다. 교실 문이 천천히 열리며, 복도의 불빛이 들이쳤다.</p>' +
-        '<p style="color:var(--color-text-secondary);font-size:13px;">'+rating+' 방과 후의 비밀을 풀고 학교 밖으로. (틀린 비밀번호 '+a+'회)</p>' +
-        '<div class="modal-actions" style="margin-top:14px;"><button onclick="restart()">다시 도전</button></div>'
-      );
-    } else {
-      log('교실 문이 단단히 잠겨있다. 특별한 열쇠가 필요해 보인다.');
-    }
+      if (a === 0) rating = '단 한 번의 실수도 없이 완벽한 추리.';
+      else if (a <= 2) rating = '약간의 시행착오 끝에.';
+      else if (a <= 5) rating = '몇 번의 헛수고 끝에.';
+      else rating = '꽤 많은 시도 끝에 마침내.';
+      showModal('<div class="win-title">탈출 성공</div><p>열쇠가 자물쇠와 딸각 맞물렸다. 교실 문이 천천히 열리며, 복도의 불빛이 들이쳤다.</p><p style="color:var(--color-text-secondary);font-size:13px;">'+rating+' 회로를 잇고, 사물함의 주인들을 추리해내고, 학교 밖으로. (틀린 비밀번호 '+a+'회)</p><div class="modal-actions" style="margin-top:14px;"><button onclick="restart()">다시 도전</button></div>');
+    } else { log('교실 문이 단단히 잠겨있다. 특별한 열쇠가 필요해 보인다.'); }
   };
 
   function onInvClick(item) {
-    if (item === 'note') {
-      showModal(
-        '<h3><i class="ti ti-notes" aria-hidden="true"></i>쪽지</h3>' +
-        noteHTML() +
-        '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>'
-      );
-    } else if (item === 'small_key') log('작고 낡은 황동 열쇠다. 작은 자물쇠에 맞을 것 같다.');
-    else if (item === 'golden_key')  log('교실 출입문 열쇠다. 분명 그 문을 열어줄 것이다.');
+    if (item === 'note') showModal('<h3><i class="ti ti-notes" aria-hidden="true"></i>서랍 쪽지</h3>' + drawerNoteHTML() + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+    else if (item === 'bp_note') showModal('<h3><i class="ti ti-school" aria-hidden="true"></i>가방 쪽지</h3>' + backpackNoteHTML() + '<div class="modal-actions"><button onclick="closeModal()">닫기</button></div>');
+    else if (item === 'small_key') log('작고 낡은 황동 열쇠다. 작은 자물쇠에 맞을 것 같다.');
+    else if (item === 'golden_key') log('교실 출입문 열쇠다.');
   }
 
   window.restart = function() {
     puzzle = generatePuzzle();
-    state = { inv: [], hasSmallKey: false, plantChecked: false, drawerOpened: false, paintingMoved: false, safeOpened: false, lampOn: true, backpackChecked: false, wrongAttempts: 0, won: false };
-    document.getElementById('backpackGroup').style.display = '';
-    document.getElementById('backpackOpenGroup').style.display = 'none';
+    randomizeCircuit();
+    state = { inv: [], hasSmallKey: false, plantChecked: false, drawerOpened: false, backpackChecked: false, circuitSolved: false, paintingMoved: false, safeOpened: false, wrongAttempts: 0, won: false };
+    scratchPad = { pos1: { color: null, subject: null }, pos2: { color: null, subject: null }, pos3: { color: null, subject: null }, pos4: { color: null, subject: null } };
     document.getElementById('plantGroup').style.display = '';
     document.getElementById('plantDugGroup').style.display = 'none';
+    document.getElementById('backpackGroup').style.display = '';
+    document.getElementById('backpackOpenGroup').style.display = 'none';
     document.getElementById('paintingGroup').style.display = '';
     document.getElementById('safeGroup').style.display = 'none';
-    document.getElementById('room').classList.remove('lamp-off');
-    const bulb = document.getElementById('lampBulb');
-    const glow = document.getElementById('lampGlow');
-    bulb.setAttribute('fill', '#FFE680');
-    bulb.setAttribute('stroke', '#D4B43A');
-    glow.setAttribute('opacity', '0.45');
-    const safeDoor = document.getElementById('safeDoor');
-    if (safeDoor) safeDoor.setAttribute('fill', '#2A2A2A');
-    updateClockHand(puzzle.digitPos);
+    document.getElementById('fuseStatus').setAttribute('fill', '#A32D2D');
+    const sd = document.getElementById('safeDoor'); if (sd) sd.setAttribute('fill', '#2A2A2A');
+    updateLockerDigitsInSVG();
     renderInventory();
     closeModal();
-    log('방과 후, 텅 빈 교실에서 깨어났다. 문은 잠겨있다. 사물함, 책상, 시간표, 벽시계… 무언가 단서가 숨어있을 것 같다.');
+    log('방과 후, 텅 빈 교실에서 깨어났다. 사물함은 어둡고, 칠판에는 분필 자국이 보인다. 단서를 모으고 사물함에 전기를 통하게 해야 할 것 같다.');
   };
 
   document.getElementById('restartBtn').addEventListener('click', window.restart);
-  document.getElementById('modalOverlay').addEventListener('click', (e) => {
-    if (e.target.id === 'modalOverlay') closeModal();
-  });
-
-  updateClockHand(puzzle.digitPos);
+  document.getElementById('modalOverlay').addEventListener('click', (e) => { if (e.target.id === 'modalOverlay') closeModal(); });
+  updateLockerDigitsInSVG();
 })();
 </script>
 </body>
